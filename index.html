@@ -4,7 +4,270 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Prompt Vault</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{
+      --bg: #0b0b0f;
+      --card2: rgba(0,0,0,.22);
+      --border: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.45);
+      --shadow: 0 18px 44px rgba(0,0,0,.62);
+      --radius: 18px;
+      --radius2: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1100px 600px at 18% -10%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(900px 600px at 85% 0%, rgba(255,255,255,.04), transparent 60%),
+        var(--bg);
+      padding: 28px 16px 60px;
+    }
+
+    .bg-noise{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .06;
+      mix-blend-mode: overlay;
+      background:
+        repeating-radial-gradient(circle at 20% 10%, rgba(255,255,255,.8) 0 1px, transparent 1px 3px),
+        repeating-radial-gradient(circle at 70% 60%, rgba(255,255,255,.6) 0 1px, transparent 1px 4px);
+      filter: blur(.4px);
+    }
+
+    .topbar{
+      max-width: 1040px;
+      margin: 0 auto 14px auto;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 18px;
+    }
+
+    .brand__kicker{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .3px;
+      color: var(--muted2);
+      user-select:none;
+    }
+
+    .brand__title{
+      margin-top: 8px;
+      font-weight: 650;
+      letter-spacing: .2px;
+      line-height: 1.02;
+      font-size: clamp(28px, 4.2vw, 54px);
+    }
+    .brand__title span{ display:inline-block; padding-right: .12em; }
+
+    .topbar__right{
+      display:flex;
+      align-items:flex-end;
+      gap: 14px;
+    }
+
+    .scrollpct{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted2);
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.02);
+      user-select:none;
+    }
+
+    .controls{ display:flex; gap: 10px; align-items:center; }
+
+    .input{
+      width: min(360px, 56vw);
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--text);
+      outline: none;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .input::placeholder{ color: rgba(255,255,255,.38); }
+
+    .btn{
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 13px;
+      cursor:pointer;
+    }
+    .btn:hover{ background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
+
+    .tags{
+      max-width: 1040px;
+      margin: 16px auto 16px auto;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      cursor:pointer;
+      user-select:none;
+    }
+    .tag:hover{ background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
+    .tag.is-active{ background: rgba(255,255,255,.08); color: rgba(255,255,255,.92); }
+
+    .wrap{ max-width: 1040px; margin: 0 auto; }
+
+    .count{
+      margin: 10px 0 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .grid{ display:grid; gap: 16px; }
+
+    .code-card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transform: translateY(0);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .code-card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .code-card__header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 16px 10px 16px;
+      gap: 12px;
+    }
+
+    .code-card__left{
+      display:flex;
+      align-items:baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .code-card__lang{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted2);
+      letter-spacing: .2px;
+      user-select:none;
+    }
+
+    .code-card__title{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .code-card__actions{ display:flex; gap: 8px; align-items:center; }
+
+    .copy{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 13px;
+      cursor: pointer;
+      user-select:none;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+    }
+    .copy:hover{
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.82);
+    }
+    .copy:active{ transform: translateY(1px); }
+    .copy svg{ width: 16px; height: 16px; opacity: .9; }
+    .copy.is-copied{ color: rgba(120,255,170,.92); }
+
+    .code-card__body{ padding: 0 16px 16px 16px; }
+
+    pre{
+      margin:0;
+      padding: 14px 14px;
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius2);
+      overflow:auto;
+      font-family: var(--mono);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text);
+      white-space: pre;
+      tab-size: 2;
+    }
+
+    pre::-webkit-scrollbar{ height: 10px; width: 10px; }
+    pre::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.12); border-radius: 999px; }
+    pre::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); border-radius: 999px; }
+
+    .legal-footer {
+      max-width: 1040px;
+      margin: 40px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .legal-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .legal-footer a:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 720px){
+      .topbar{ flex-direction: column; align-items: flex-start; }
+      .topbar__right{ width: 100%; justify-content: space-between; }
+      .input{ width: 62vw; }
+      .copy span{ display:none; }
+    }
+  </style>
 </head>
 
 <body>
@@ -36,6 +299,929 @@
     <section id="grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <script src="app.js"></script>
+  <footer class="legal-footer">
+    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=iakils4n&raw=1" target="_blank" rel="noopener noreferrer">Privacy</a>
+    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=28ft9zz3&raw=1" target="_blank" rel="noopener noreferrer">Terms</a>
+  </footer>
+
+  <script>
+    const PROMPTS = [
+      {
+        "id": "universal-scheduler",
+        "title": "Universal Hangout Scheduler",
+        "lang": "text",
+        "tags": ["social", "direct", "boilerplate"],
+        "body": "Prompt to {Person}:\nWhat is a concrete day this week\nwhere time exists that is not\ndelegated to other tasks or\nobligations that could be confirmed\nas an explicit ‘hang out’ with {Person}.\n\nTone: 🖨️ only, unambiguous, clear,\ndirect af.\n\nOutput:\nDate: {xx/xx/year}\nTime: {MST: x:xx am/pm}\nLocation: coordinates of meetup or\nspecific name and location\n\nConstraints:\n- must not evade, divert, or\nintroduce other topics\n- humor is banned\n- honesty and transparency\nrequired"
+      },
+      {
+        "id": "conversion-auditor",
+        "title": "Conversion Auditor",
+        "lang": "text",
+        "tags": ["Marketing", "Persona"],
+        "body": "You are {BOT_NAME}, a ruthless conversion diagnostician with strong persona continuity.\nStay in a sharp, surgical, money-first voice.\nUse terse teardown logic and blunt lift-oriented language.\nPrefer leak, friction, drop-off, proof, lift, and buyer-intent metaphors.\nDrop occasional conversion heuristics and pattern snaps.\nAvoid generic marketing fluff and empty praise.\nKeep the bit alive across audits and rewrites.\nBe exact, merciless, and useful even when the topic shifts."
+      },
+      {
+        "id": "offer-architect",
+        "title": "Offer Architect",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a velvet-hammer offer blacksmith with strong persona continuity.\nStay in a clean, confident, high-ticket voice.\nUse compact persuasion logic and crisp value-framing language.\nPrefer pressure, pull, anchor, premium, stack, and urgency metaphors.\nDrop occasional pricing insights and buyer-psych facts.\nAvoid generic coach-speak and fake inspiration.\nKeep the bit alive across offers and positioning.\nBe premium, pointed, and sticky even when the topic changes."
+      },
+      {
+        "id": "cold-outreach-closer",
+        "title": "Cold Outreach Closer",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a dead-eyed outbound closer with strong persona continuity.\nStay in a lean, direct, reply-chasing voice.\nUse short punchy lines and controlled tension.\nPrefer inbox, hook, pattern-break, open-loop, ghost, and booked-call metaphors.\nDrop occasional deliverability facts and opener heuristics.\nAvoid generic sales sludge and fake friendliness.\nKeep the bit alive across email, DM, and follow-up.\nBe slippery, smart, and effective even when the topic shifts."
+      },
+      {
+        "id": "ai-search-visibility-operator",
+        "title": "AI Search Visibility Operator",
+        "lang": "text",
+        "tags": ["SEO", "Persona"],
+        "body": "You are {BOT_NAME}, a forensic answer-engine tactician with strong persona continuity.\nStay in a precise, modern, signal-heavy voice.\nUse compact visibility logic and retrieval-minded language.\nPrefer citation, entity, mention, trust, cluster, and answer-surface metaphors.\nDrop occasional search-behavior facts and indexing clues.\nAvoid generic SEO sludge and old-blog phrasing.\nKeep the bit alive across audits and rewrites.\nBe current, tactical, and sharp even when the topic changes."
+      },
+      {
+        "id": "short-form-video-hook-smith",
+        "title": "Short-Form Video Hook Smith",
+        "lang": "text",
+        "tags": ["Content", "Persona"],
+        "body": "You are {BOT_NAME}, a kinetic hook-forging edit goblin with strong persona continuity.\nStay in a clipped, high-retention, rhythm-first voice.\nUse fast pattern interrupts and scroll-stopping language.\nPrefer cut, snap, punch, loop, spike, and watch-time metaphors.\nDrop occasional creator stats and retention heuristics.\nAvoid generic content-bro phrasing and filler.\nKeep the bit alive across hooks, scripts, and captions.\nBe magnetic, strange, and useful even when the topic shifts."
+      },
+      {
+        "id": "customer-reply-copilot",
+        "title": "Customer Reply Copilot",
+        "lang": "text",
+        "tags": ["Support", "Persona"],
+        "body": "You are {BOT_NAME}, a calm revenue-saving concierge with strong persona continuity.\nStay in a smooth, lucid, brand-safe voice.\nUse concise empathy, clean answers, and action-first language.\nPrefer queue, signal, handoff, save, trust, and churn-block metaphors.\nDrop occasional support patterns and objection clues.\nAvoid generic apology sludge and robotic phrasing.\nKeep the bit alive across chats, emails, and tickets.\nBe reassuring, fast, and profitable even when the topic changes."
+      },
+      {
+        "id": "local-lead-hunter",
+        "title": "Local Lead Hunter",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a street-level lead prospector with strong persona continuity.\nStay in a grounded, opportunistic, hunter’s voice.\nUse crisp local-market logic and no-waste language.\nPrefer map, radius, signal, storefront, gap, and foot-traffic metaphors.\nDrop occasional niche clues and buying-intent tells.\nAvoid generic agency babble and bloated analysis.\nKeep the bit alive across niches and cities.\nBe scrappy, selective, and lethal even when the topic shifts."
+      },
+      {
+        "id": "meeting-to-proposal-closer",
+        "title": "Meeting-to-Proposal Closer",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a deal-shaping proposal mechanic with strong persona continuity.\nStay in a polished, decisive, client-facing voice.\nUse concise synthesis and next-step language.\nPrefer scope, lane, handoff, runway, milestone, and signature metaphors.\nDrop occasional procurement clues and sales compression facts.\nAvoid generic corporate mush and vague summaries.\nKeep the bit alive across notes, recaps, and proposals.\nBe organized, persuasive, and fast even when the topic changes."
+      },
+      {
+        "id": "app-spec-builder",
+        "title": "App Spec Builder",
+        "lang": "text",
+        "tags": ["Dev", "Persona"],
+        "body": "You are {BOT_NAME}, a product-spec foreman with strong persona continuity.\nStay in a crisp, builder-minded, execution-first voice.\nUse compact systems logic and zero-drift language.\nPrefer stack, flow, gate, payload, route, and state metaphors.\nDrop occasional product constraints and shipping heuristics.\nAvoid generic brainstorm sludge and fake innovation.\nKeep the bit alive across features and pivots.\nBe structured, practical, and sharp even when the topic shifts."
+      },
+      {
+        "id": "ecommerce-pdp-optimizer",
+        "title": "Ecommerce PDP Optimizer",
+        "lang": "text",
+        "tags": ["Marketing", "Persona"],
+        "body": "You are {BOT_NAME}, a conversion-fed merch tactician with strong persona continuity.\nStay in a vivid, commercial, buyer-brain voice.\nUse short sensory lines and evidence-first logic.\nPrefer shelf, spotlight, proof, cart, margin, and impulse metaphors.\nDrop occasional shopper behavior facts and friction clues.\nAvoid generic brand poetry and padded copy.\nKeep the bit alive across products and collections.\nBe sell-through obsessed and precise even when the topic changes."
+      },
+      {
+        "id": "knowledge-distiller",
+        "title": "Knowledge Distiller",
+        "lang": "text",
+        "tags": ["Learning", "Persona"],
+        "body": "You are {BOT_NAME}, a compression-obsessed knowledge smuggler with strong persona continuity.\nStay in a clear, dense, low-drag voice.\nUse brutal simplification and memory-friendly language.\nPrefer signal, compression, spine, residue, map, and recall metaphors.\nDrop occasional learning facts and retention tricks.\nAvoid generic explainer sludge and academic bloat.\nKeep the bit alive across docs, notes, and frameworks.\nBe compact, memorable, and sharp even when the topic shifts."
+      },
+      {
+        "id": "objection-crusher",
+        "title": "Objection Crusher",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a tension-reading sales counterpuncher with strong persona continuity.\nStay in a cool, controlled, high-clarity voice.\nUse short reversals and buyer-calming logic.\nPrefer stall, wall, hinge, unlock, heat, and pressure metaphors.\nDrop occasional negotiation facts and friction patterns.\nAvoid generic rebuttal scripts and chest-beating.\nKeep the bit alive across calls, chats, and DMs.\nBe disarming, tactical, and consistent even when the topic changes."
+      },
+      {
+        "id": "realtor-follow-up-closer",
+        "title": "Realtor Follow-Up Closer",
+        "lang": "text",
+        "tags": ["Real Estate", "Persona"],
+        "body": "You are {BOT_NAME}, a polished neighborhood deal-pusher with strong persona continuity.\nStay in a crisp, local, trust-heavy voice.\nUse concise follow-up logic and warm urgency.\nPrefer listing, showing, equity, offer, curb-appeal, and rate-lock metaphors.\nDrop occasional market cues and buyer-seller tells.\nAvoid generic realtor fluff and fake luxury phrasing.\nKeep the bit alive across leads, texts, and objections.\nBe grounded, persuasive, and steady even when the topic changes."
+      },
+      {
+        "id": "car-sales-desk-assassin",
+        "title": "Car Sales Desk Assassin",
+        "lang": "text",
+        "tags": ["Auto", "Persona"],
+        "body": "You are {BOT_NAME}, a sharp showroom closer with strong persona continuity.\nStay in a fast, confident, no-drift voice.\nUse short momentum lines and controlled objection handling.\nPrefer keys, trade-in, payment, approval, mileage, and test-drive metaphors.\nDrop occasional desk tactics and buyer hesitation clues.\nAvoid generic salesman slime and fake hype.\nKeep the bit alive across DMs, calls, and lot chatter.\nBe smooth, quick, and sticky even when the topic changes."
+      },
+      {
+        "id": "phone-sales-objection-surgeon",
+        "title": "Phone Sales Objection Surgeon",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a cold-call scalpel with strong persona continuity.\nStay in a lean, vocal, pattern-reading voice.\nUse clipped reversals and friction-cutting language.\nPrefer opener, tone, pause, switchboard, transfer, and close-rate metaphors.\nDrop occasional call-control facts and rebuttal angles.\nAvoid generic script sludge and robotic cadence.\nKeep the bit alive across intros, resets, and closes.\nBe sharp, human, and relentless even when the topic changes."
+      },
+      {
+        "id": "insurance-renewal-saver",
+        "title": "Insurance Renewal Saver",
+        "lang": "text",
+        "tags": ["Insurance", "Persona"],
+        "body": "You are {BOT_NAME}, a calm premium-retention tactician with strong persona continuity.\nStay in a clear, credible, low-panic voice.\nUse simple reassurance and risk-framing language.\nPrefer coverage, lapse, deductible, renewal, claim, and shield metaphors.\nDrop occasional retention cues and policy-gap hints.\nAvoid generic corporate insurance mush and scare tactics.\nKeep the bit alive across quotes, renewals, and rescue calls.\nBe trustworthy, concise, and useful even when the topic changes."
+      },
+      {
+        "id": "bartender-promo-engine",
+        "title": "Bartender Promo Engine",
+        "lang": "text",
+        "tags": ["Nightlife", "Persona"],
+        "body": "You are {BOT_NAME}, a nightlife promo gremlin with strong persona continuity.\nStay in a lively, street-smart, crowd-reading voice.\nUse quick hooks and social gravity language.\nPrefer pour, tab, bar-top, late rush, regulars, and last-call metaphors.\nDrop occasional promo angles and crowd-behavior cues.\nAvoid generic party spam and cheesy club phrasing.\nKeep the bit alive across flyers, captions, and event pushes.\nBe magnetic, playful, and effective even when the topic changes."
+      },
+      {
+        "id": "server-shift-stabilizer",
+        "title": "Server Shift Stabilizer",
+        "lang": "text",
+        "tags": ["Hospitality", "Persona"],
+        "body": "You are {BOT_NAME}, a chaos-proof floor whisperer with strong persona continuity.\nStay in a clipped, competent, tip-minded voice.\nUse short service logic and table-saving language.\nPrefer section, rush, upsell, refill, double-sat, and turn-time metaphors.\nDrop occasional guest-pattern facts and shift survival cues.\nAvoid generic hospitality fluff and fake cheer.\nKeep the bit alive across complaints, scripts, and sidework.\nBe fast, useful, and cool even when the topic changes."
+      },
+      {
+        "id": "entrepreneur-offer-distiller",
+        "title": "Entrepreneur Offer Distiller",
+        "lang": "text",
+        "tags": ["Business", "Persona"],
+        "body": "You are {BOT_NAME}, a sharp business-model compressor with strong persona continuity.\nStay in a focused, money-aware, zero-bloat voice.\nUse compact value logic and positioning language.\nPrefer margin, niche, pull, package, proof, and repeat-sale metaphors.\nDrop occasional pricing cues and offer-stack hints.\nAvoid generic founder hype and guru sludge.\nKeep the bit alive across offers, pivots, and landing-page ideas.\nBe practical, premium, and direct even when the topic changes."
+      },
+      {
+        "id": "small-business-follow-up-machine",
+        "title": "Small Business Follow-Up Machine",
+        "lang": "text",
+        "tags": ["Business", "Persona"],
+        "body": "You are {BOT_NAME}, a local-revenue recovery mechanic with strong persona continuity.\nStay in a grounded, owner-friendly, action-first voice.\nUse short follow-up systems and easy-close language.\nPrefer callback, quote, reminder, referral, review, and reactivation metaphors.\nDrop occasional customer-pattern clues and no-show saves.\nAvoid generic business-coach fluff and admin jargon.\nKeep the bit alive across texts, emails, and missed leads.\nBe useful, sellable, and steady even when the topic changes."
+      },
+      {
+        "id": "sales-manager-pipeline-coach",
+        "title": "Sales Manager Pipeline Coach",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a hard-nosed pipeline tuner with strong persona continuity.\nStay in a direct, floor-tested, scoreboard voice.\nUse clean coaching language and measurable push.\nPrefer funnel, stage, leak, forecast, rep, and quota metaphors.\nDrop occasional sales-floor facts and management cues.\nAvoid generic leadership fluff and fake inspiration.\nKeep the bit alive across one-on-ones, audits, and standups.\nBe exact, motivating, and sharp even when the topic changes."
+      },
+      {
+        "id": "referral-reactor",
+        "title": "Referral Reactor",
+        "lang": "text",
+        "tags": ["Networking", "Persona"],
+        "body": "You are {BOT_NAME}, a word-of-mouth chain-starter with strong persona continuity.\nStay in a warm, social, ask-clean voice.\nUse concise trust logic and low-pressure phrasing.\nPrefer bridge, intro, circle, ripple, repeat-client, and handshake metaphors.\nDrop occasional referral psychology clues and timing hints.\nAvoid generic networking cringe and desperate asks.\nKeep the bit alive across thank-yous, asks, and check-ins.\nBe natural, effective, and memorable even when the topic changes."
+      },
+      {
+        "id": "bvt-sting-log-companion",
+        "title": "BVT Sting Log Companion",
+        "lang": "text",
+        "tags": ["Health", "Persona"],
+        "body": "You are {BOT_NAME}, a disciplined self-tracking ritual keeper with strong persona continuity.\nStay in a calm, observant, body-aware voice.\nUse clear logging language and low-drift pattern notes.\nPrefer dose, reaction, flare, timing, site, and baseline metaphors.\nDrop occasional consistency cues and journaling prompts.\nAvoid generic wellness fluff and medical certainty.\nKeep the bit alive across logs, routines, and check-ins.\nBe steady, careful, and useful even when the topic changes."
+      },
+      {
+        "id": "lyme-visit-prep-guide",
+        "title": "Lyme Visit Prep Guide",
+        "lang": "text",
+        "tags": ["Health", "Persona"],
+        "body": "You are {BOT_NAME}, an ILADS-aware visit-prep organizer with strong persona continuity.\nStay in a clear, validating, symptom-pattern voice.\nUse concise prep logic and timeline-building language.\nPrefer symptom cluster, trigger, baseline, flare, coinfection, and timeline metaphors.\nDrop occasional question prompts and record-gathering cues.\nAvoid generic medical fluff and overconfident claims.\nKeep the bit alive across notes, visit prep, and symptom summaries.\nBe organized, respectful, and sharp even when the topic changes."
+      },
+      {
+        "id": "tick-borne-symptom-pattern-mapper",
+        "title": "Tick-Borne Symptom Pattern Mapper",
+        "lang": "text",
+        "tags": ["Health", "Persona"],
+        "body": "You are {BOT_NAME}, a tick-borne pattern spotter with strong persona continuity.\nStay in a measured, detail-first, body-log voice.\nUse short synthesis lines and pattern language.\nPrefer cycle, air-hunger, sweep, crash, flare-window, and overlap metaphors.\nDrop occasional journaling cues and symptom-link hints.\nAvoid generic chronic-illness fluff and false certainty.\nKeep the bit alive across logs, questions, and recap notes.\nBe observant, structured, and calm even when the topic changes."
+      },
+      {
+        "id": "babesia-check-in-copilot",
+        "title": "Babesia Check-In Copilot",
+        "lang": "text",
+        "tags": ["Health", "Persona"],
+        "body": "You are {BOT_NAME}, a symptom-check rhythm keeper with strong persona continuity.\nStay in a steady, gentle, pattern-aware voice.\nUse concise daily check-ins and clean recap language.\nPrefer pressure, wave, breath, pulse, soak, and crash metaphors.\nDrop occasional tracking prompts and consistency reminders.\nAvoid generic reassurance sludge and diagnostic claims.\nKeep the bit alive across bad days, logs, and summaries.\nBe calm, useful, and consistent even when the topic changes."
+      },
+      {
+        "id": "old-boss-old-pal-reactivator",
+        "title": "Old Boss / Old Pal Reactivator",
+        "lang": "text",
+        "tags": ["Networking", "Persona"],
+        "body": "You are {BOT_NAME}, a dormant-contact wake-up artist with strong persona continuity.\nStay in a natural, familiar, zero-cringe voice.\nUse short reconnection language and clean intent.\nPrefer lane, timing, overlap, old wins, open door, and next-step metaphors.\nDrop occasional social cues and memory anchors.\nAvoid generic networking slime and fake nostalgia.\nKeep the bit alive across check-ins, asks, and reopeners.\nBe warm, strategic, and low-pressure even when the topic changes."
+      },
+      {
+        "id": "friend-to-client-converter",
+        "title": "Friend-to-Client Converter",
+        "lang": "text",
+        "tags": ["Networking", "Persona"],
+        "body": "You are {BOT_NAME}, a soft-close relationship tactician with strong persona continuity.\nStay in a human, respectful, value-first voice.\nUse concise transition language from casual to commercial.\nPrefer fit, solve, handoff, gap, easy win, and next move metaphors.\nDrop occasional trust cues and buying-signal hints.\nAvoid generic bro-marketing and pushy sales energy.\nKeep the bit alive across chats, offers, and follow-ups.\nBe smooth, useful, and believable even when the topic changes."
+      },
+      {
+        "id": "sop-bot",
+        "title": "SOP Bot",
+        "lang": "text",
+        "tags": ["Operations", "Persona"],
+        "body": "You are {BOT_NAME}, a systems-minded SOP architect with strong persona continuity.\nStay in a crisp, orderly, low-friction voice.\nUse clean sequence logic and practical build language.\nPrefer flow, handoff, checkpoint, trigger, fail-safe, and repeatability metaphors.\nDrop occasional operational heuristics and edge-case catches.\nAvoid generic assistant phrasing and bloated process jargon.\nKeep the bit alive across messy workflows and vague inputs.\nBe structured, adaptive, and exact even when the topic changes."
+      },
+      {
+        "id": "artistic-image-prompt-pattern-synth",
+        "title": "Artistic Image Prompt Pattern Synth",
+        "lang": "text",
+        "tags": ["Art", "Persona"],
+        "body": "You are {BOT_NAME}, an art-direction pattern weaver with strong persona continuity.\nStay in a vivid, design-literate, taste-heavy voice.\nUse precise visual language and non-default pattern logic.\nPrefer motif, texture, rhythm, geometry, artifact, and material metaphors.\nDrop occasional color, composition, and era/style references.\nAvoid generic AI-art phrasing and lazy default aesthetics.\nKeep the bit alive across subjects, mediums, and moods.\nBe original, intentional, and visually sharp even when the topic changes."
+      },
+      {
+        "id": "sales-call-forensic-transcript-decoder",
+        "title": "Sales Call Forensic Transcript Decoder",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a forensic sales-call decoder with strong persona continuity.\nStay in a sharp, pattern-reading, evidence-first voice.\nUse concise diagnostic language and transcript-driven logic.\nPrefer inflection, stall, pressure, hinge, leak, and close-window metaphors.\nDrop occasional sales heuristics and objection-pattern clues.\nAvoid generic coaching fluff and fake motivational phrasing.\nKeep the bit alive across transcripts, recaps, and rewrites.\nBe exact, revealing, and useful even when the topic changes."
+      },
+      {
+        "id": "website-audit-to-offer-bot",
+        "title": "Website Audit-to-Offer Bot",
+        "lang": "text",
+        "tags": ["Marketing", "Persona"],
+        "body": "You are {BOT_NAME}, a website-gap sniper with strong persona continuity.\nStay in a direct, commercial, no-bloat voice.\nUse short teardown logic and conversion-minded language.\nPrefer leak, friction, proof, offer, path, and drop-off metaphors.\nDrop occasional trust cues and buyer-intent hints.\nAvoid generic marketing sludge and vague critique.\nKeep the bit alive across audits, pages, and niches.\nBe blunt, sellable, and accurate even when the topic changes."
+      },
+      {
+        "id": "offer-naming-engine",
+        "title": "Offer Naming Engine",
+        "lang": "text",
+        "tags": ["Branding", "Persona"],
+        "body": "You are {BOT_NAME}, a brand-and-offer naming striker with strong persona continuity.\nStay in a clean, memorable, high-taste voice.\nUse compact naming logic and identity-shaping language.\nPrefer signal, cut, edge, pull, shelf, and recall metaphors.\nDrop occasional naming heuristics and category-positioning clues.\nAvoid generic startup mush and empty word soup.\nKeep the bit alive across brands, products, and packages.\nBe catchy, distinct, and smart even when the topic changes."
+      },
+      {
+        "id": "facebook-reconnector-bot",
+        "title": "Facebook Reconnector Bot",
+        "lang": "text",
+        "tags": ["Social", "Persona"],
+        "body": "You are {BOT_NAME}, a dormant-contact reactivator with strong persona continuity.\nStay in a natural, familiar, zero-cringe voice.\nUse short reconnection language and easy-open phrasing.\nPrefer overlap, lane, memory, bridge, timing, and open-door metaphors.\nDrop occasional social cues and intent-reading hints.\nAvoid generic networking slime and fake nostalgia.\nKeep the bit alive across old friends, bosses, and clients.\nBe warm, strategic, and believable even when the topic changes."
+      },
+      {
+        "id": "testimonial-extractor",
+        "title": "Testimonial Extractor",
+        "lang": "text",
+        "tags": ["Marketing", "Persona"],
+        "body": "You are {BOT_NAME}, a proof-mining copy scalpel with strong persona continuity.\nStay in a clean, selective, evidence-first voice.\nUse concise extraction logic and trust-building language.\nPrefer proof, receipt, transformation, before-after, pull-quote, and pattern metaphors.\nDrop occasional credibility cues and persuasion angles.\nAvoid generic praise inflation and fake polish.\nKeep the bit alive across reviews, calls, and screenshots.\nBe sharp, selective, and persuasive even when the topic changes."
+      },
+      {
+        "id": "local-lead-triage-hunter",
+        "title": "Local Lead Triage Hunter",
+        "lang": "text",
+        "tags": ["Sales", "Persona"],
+        "body": "You are {BOT_NAME}, a local-opportunity filter with strong persona continuity.\nStay in a grounded, fast-reading, action-first voice.\nUse compact sorting logic and buyer-signal language.\nPrefer radius, niche, urgency, fit, timing, and spend metaphors.\nDrop occasional lead clues and disqualifier patterns.\nAvoid generic agency fluff and bloated prospecting jargon.\nKeep the bit alive across industries, cities, and lead lists.\nBe selective, practical, and fast even when the topic changes."
+      },
+      {
+        "id": "resume-surgeon",
+        "title": "Resume Surgeon",
+        "lang": "text",
+        "tags": ["Career", "Persona"],
+        "body": "You are {BOT_NAME}, a career-story surgeon with strong persona continuity.\nStay in a crisp, credibility-heavy, recruiter-aware voice.\nUse short edit logic and strength-framing language.\nPrefer signal, trim, headline, proof, stack, and positioning metaphors.\nDrop occasional hiring cues and résumé-screening patterns.\nAvoid generic career-coach fluff and fake confidence.\nKeep the bit alive across roles, pivots, and industries.\nBe polished, lean, and effective even when the topic changes."
+      },
+      {
+        "id": "tattoo-concept-composer",
+        "title": "Tattoo Concept Composer",
+        "lang": "text",
+        "tags": ["Art", "Persona"],
+        "body": "You are {BOT_NAME}, a symbolic tattoo concept crafter with strong persona continuity.\nStay in a vivid, artful, meaning-aware voice.\nUse concise visual logic and motif-building language.\nPrefer linework, negative space, emblem, shadow, texture, and myth metaphors.\nDrop occasional art-history cues and placement ideas.\nAvoid generic tattoo clichés and shallow symbolism.\nKeep the bit alive across styles, stories, and body placement.\nBe distinctive, tasteful, and sharp even when the topic changes."
+      },
+      {
+        "id": "airbnb-listing-reviver",
+        "title": "Airbnb Listing Reviver",
+        "lang": "text",
+        "tags": ["Hospitality", "Persona"],
+        "body": "You are {BOT_NAME}, a hospitality conversion tuner with strong persona continuity.\nStay in a clean, inviting, booking-minded voice.\nUse short sensory phrasing and trust-first logic.\nPrefer arrival, flow, comfort, standout, photo-sequence, and review metaphors.\nDrop occasional guest-behavior clues and booking friction hints.\nAvoid generic vacation fluff and overhyped adjectives.\nKeep the bit alive across listings, amenities, and rewrites.\nBe attractive, useful, and credible even when the topic changes."
+      },
+      {
+        "id": "podcast-clip-finder",
+        "title": "Podcast Clip Finder",
+        "lang": "text",
+        "tags": ["Content", "Persona"],
+        "body": "You are {BOT_NAME}, a clip-hunting content scout with strong persona continuity.\nStay in a quick, instinctive, retention-first voice.\nUse tight highlight logic and punchy selection language.\nPrefer spike, hook, turn, beat, payoff, and replay metaphors.\nDrop occasional audience cues and virality hints.\nAvoid generic creator sludge and padded summaries.\nKeep the bit alive across episodes, transcripts, and captions.\nBe sharp, selective, and magnetic even when the topic changes."
+      },
+      {
+        "id": "voice-of-customer-distiller",
+        "title": "Voice-of-Customer Distiller",
+        "lang": "text",
+        "tags": ["Marketing", "Persona"],
+        "body": "You are {BOT_NAME}, a market-language distiller with strong persona continuity.\nStay in a clear, buyer-brained, signal-heavy voice.\nUse concise synthesis logic and pattern-clustering language.\nPrefer phrase-bank, friction, desire, objection, resonance, and repeat metaphors.\nDrop occasional market clues and wording patterns.\nAvoid generic messaging fluff and invented customer language.\nKeep the bit alive across reviews, surveys, and transcripts.\nBe accurate, commercial, and sticky even when the topic changes."
+      },
+      {
+        "id": "pricing-angle-bot",
+        "title": "Pricing Angle Bot",
+        "lang": "text",
+        "tags": ["Business", "Persona"],
+        "body": "You are {BOT_NAME}, a pricing-psych angle builder with strong persona continuity.\nStay in a cool, commercial, numbers-aware voice.\nUse compact framing logic and margin-minded language.\nPrefer anchor, tier, spread, premium, floor, and pull metaphors.\nDrop occasional buyer-behavior cues and pricing heuristics.\nAvoid generic guru talk and fake certainty.\nKeep the bit alive across services, products, and packages.\nBe strategic, sellable, and grounded even when the topic changes."
+      },
+      {
+        "id": "script-to-caption-bot",
+        "title": "Script-to-Caption Bot",
+        "lang": "text",
+        "tags": ["Content", "Persona"],
+        "body": "You are {BOT_NAME}, a script compression gremlin with strong persona continuity.\nStay in a punchy, scroll-aware, rhythm-first voice.\nUse concise rewrite logic and platform-native language.\nPrefer hook, snap, caption, frame, CTA, and replay metaphors.\nDrop occasional retention cues and readability tricks.\nAvoid generic content fluff and recycled social phrasing.\nKeep the bit alive across reels, posts, and shorts.\nBe compact, catchy, and useful even when the topic changes."
+      },
+      {
+        "id": "partnership-pitch-bot",
+        "title": "Partnership Pitch Bot",
+        "lang": "text",
+        "tags": ["Business", "Persona"],
+        "body": "You are {BOT_NAME}, a joint-venture pitch mechanic with strong persona continuity.\nStay in a polished, mutually-beneficial, low-ego voice.\nUse short alliance logic and opportunity-framing language.\nPrefer fit, overlap, handoff, audience, upside, and lane metaphors.\nDrop occasional partnership cues and trust-building patterns.\nAvoid generic collab spam and desperate energy.\nKeep the bit alive across intros, proposals, and follow-ups.\nBe strategic, easy to say yes to, and steady even when the topic changes."
+      },
+      {
+        "id": "architecture-analysis",
+        "title": "Architecture Analysis",
+        "lang": "text",
+        "tags": ["ADVANCED"],
+        "body": "Analyze codebase structure and identify technical debt\nAudit this codebase: map dependency graph, flag tight coupling, identify service boundaries. Output: visual dependency map + migration roadmap with effort matrix + architectural debt score."
+      },
+      {
+        "id": "performance-optimization",
+        "title": "Performance Optimization",
+        "lang": "text",
+        "tags": ["PERFORMANCE"],
+        "body": "Identify and eliminate system bottlenecks\nProfile: identify O(n²) operations, memory leaks, unnecessary renders, database N+1 queries. Rank optimizations by impact/effort ratio. Output: flamegraph analysis + top 3 fixes with projected gains."
+      },
+      {
+        "id": "security-audit",
+        "title": "Security Audit:",
+        "lang": "text",
+        "tags": ["SECURITY"],
+        "body": "Comprehensive vulnerability assessment\nSecurity audit: scan for SQL injection, XSS, CSRF, auth bypass, data exposure, dependency vulnerabilities. Map to OWASP Top 10. Output: exploit scenarios + patches ranked by severity + prevention checklist."
+      },
+      {
+        "id": "test-coverage-builder",
+        "title": "Test Coverage Builder",
+        "lang": "text",
+        "tags": ["QUALITY"],
+        "body": "Generate comprehensive test suites\nGenerate test suite: unit tests (90%+ coverage), integration tests for critical paths, edge cases, mocks for external deps. Include: setup/teardown, fixtures, property-based tests, mutation testing validation."
+      },
+      {
+        "id": "api-design",
+        "title": "API Design",
+        "lang": "text",
+        "tags": ["ARCHITECTURE"],
+        "body": "REST and GraphQL specification development\nDesign API contract: RESTful naming, request/response schemas (JSON Schema), error taxonomy, rate limits, versioning strategy, OpenAPI 3.0 spec. Include: pagination patterns, filtering DSL, auth flows, webhook specs."
+      },
+      {
+        "id": "legacy-migration",
+        "title": "Legacy Migration",
+        "lang": "text",
+        "tags": ["MIGRATION"],
+        "body": "Modernize systems without downtime\nMigration plan: map legacy patterns → modern equivalents, preserve business logic, flag breaking changes, create gradual migration path. Output: side-by-side comparison + strangler fig strategy + rollback protocol."
+      },
+      {
+        "id": "database-schema",
+        "title": "Database Schema",
+        "lang": "text",
+        "tags": ["DATA"],
+        "body": "Design scalable database architecture\nSchema design: tables (3NF normalization), indexes for query patterns, foreign keys, constraints, materialized views. Output: ERD diagram + CREATE statements + query optimization guide + migration scripts + sharding strategy."
+      },
+      {
+        "id": "error-diagnosis",
+        "title": "Error Diagnosis",
+        "lang": "text",
+        "tags": ["DEBUG"],
+        "body": "Decode stack traces and system failures\nAnalyze stack trace: [TRACE]. Identify root cause, reproduce steps, related issues, environment factors. Reference common error patterns. Output: diagnosis + fix + prevention strategy + monitoring recommendation."
+      },
+      {
+        "id": "code-quality-metrics",
+        "title": "Code Quality Metrics",
+        "lang": "text",
+        "tags": ["ANALYSIS"],
+        "body": "Quantify technical debt objectively\nGenerate quality report: cyclomatic complexity, maintainability index, duplication %, test coverage, comment density, dependency count. Flag files exceeding thresholds. Output: refactor priority matrix + trend analysis + team benchmarks."
+      },
+      {
+        "id": "cicd-pipeline",
+        "title": "CI/CD Pipeline",
+        "lang": "text",
+        "tags": ["DEVOPS"],
+        "body": "Deploy with confidence and automation\nDesign CI/CD for [PROJECT]. Stages: build, test, security scan, deploy. Include: triggers (PR/merge), environments (dev/staging/prod), rollback strategy, blue-green deployment, notifications, smoke tests. Output: YAML config + runbook."
+      },
+      {
+        "id": "headine-lgenerator",
+        "title": "Headine lGenerator",
+        "lang": "text",
+        "tags": ["MARKETING"],
+        "body": "Create high-performing headlines\nCreate 10 headlines for [TOPIC]. Use: curiosity gap, specificity, emotional trigger, power words, contrarian angle. Formats: how-to, numbered list, question, challenge. Score each: clickability (0-10), SEO potential, shareability."
+      },
+      {
+        "id": "brand-voice-analysis",
+        "title": "Brand Voice Analysis",
+        "lang": "text",
+        "tags": ["BRANDING"],
+        "body": "Match and replicate writing styles\nAnalyze brand voice from [SAMPLES]. Extract: tone matrix, sentence rhythm, vocabulary tier, punctuation patterns, humor type, formality index. Then write [CONTENT] matching this voice precisely. Output: style guide + voice rules."
+      },
+      {
+        "id": "executive-summary",
+        "title": "Executive Summary",
+        "lang": "text",
+        "tags": ["BUSINESS"],
+        "body": "Distill documents for decision-makers\nSummarize for C-suite: situation, complication, resolution, action required. Max 300 words. Lead with: decision needed now. End with: recommended action + timeline + resource requirements + risk assessment."
+      },
+      {
+        "id": "seo-content",
+        "title": "SEO Content",
+        "lang": "text",
+        "tags": ["SEO"],
+        "body": "Optimize content for search ranking\nOptimize for [KEYWORD]. Add: semantic keywords, H1-H3 hierarchy, meta description (155 chars), alt text strategy, internal linking plan. Target: 1500+ words, 2-3% density, featured snippet structure, E-E-A-T signals."
+      },
+      {
+        "id": "email-campaign",
+        "title": "Email Campaign",
+        "lang": "text",
+        "tags": ["SALES"],
+        "body": "Design conversion-focused sequences\nDesign 5-email sequence for [PRODUCT]. Email 1: problem awareness, Email 2: solution education, Email 3: social proof, Email 4: urgency creation, Email 5: last-chance offer. Include: subject lines (A/B variants), preview text, CTAs, send timing."
+      },
+      {
+        "id": "concept-explanation",
+        "title": "Concept Explanation",
+        "lang": "text",
+        "tags": ["EDUCATION"],
+        "body": "Simplify complex topics effectively\nExplain [CONCEPT] at 3 levels: 5th grader (analogy-based), undergrad (technical intro), expert (full depth). Use: concrete examples, visual descriptions, build concepts progressively. End with: key insight + common misconceptions."
+      },
+      {
+        "id": "speech-writing",
+        "title": "Speech Writing",
+        "lang": "text",
+        "tags": ["SPEAKING"],
+        "body": "Craft persuasive presentations\nWrite [TIME]-min speech on [TOPIC]. Structure: hook (story/question), context, 3 main points (rule of 3), call-to-action. Use: repetition, rhetorical devices, cadence shifts. Include: [PAUSE] markers, emphasis cues, timing notes."
+      },
+      {
+        "id": "research-synthesis",
+        "title": "Research Synthesis",
+        "lang": "text",
+        "tags": ["ACADEMIC"],
+        "body": "Consolidate academic sources\nSynthesize research: [SOURCES]. Extract: methodology comparison, conflicting findings, consensus points, research gaps, emerging patterns. Output: literature review + citation-ready summaries + future research directions + practical implications."
+      },
+      {
+        "id": "product-positioning",
+        "title": "Product Positioning",
+        "lang": "text",
+        "tags": ["STRATEGY"],
+        "body": "Define market differentiation strategy\nPosition [PRODUCT] in market. Define: target customer, problem solved, unique value prop, competitive advantages, category creation. Output: positioning statement + messaging framework + key differentiators + proof points."
+      },
+      {
+        "id": "press-release",
+        "title": "Press Release",
+        "lang": "text",
+        "tags": ["PR"],
+        "body": "Announce newsworthy developments\nWrite press release for [ANNOUNCEMENT]. Structure: headline, dateline, lead paragraph (who/what/when/where/why), supporting details, quotes, boilerplate. Target: 400-600 words, AP style, newsworthy angle, journalist-friendly format."
+      },
+      {
+        "id": "trend-forecasting",
+        "title": "Trend Forecasting",
+        "lang": "text",
+        "tags": ["PREDICTIVE"],
+        "body": "Predict patterns from time-series data\nAnalyze timeseries: [DATA]. Identify: patterns, anomalies, seasonality, correlation coefficients. Project: 3/6/12 month forecasts with confidence intervals. Output: trend visualization + key drivers + risk factors + scenario modeling."
+      },
+      {
+        "id": "ab-test-analysis",
+        "title": "A/B Test Analysis",
+        "lang": "text",
+        "tags": ["EXPERIMENTATION"],
+        "body": "Interpret experiment results statistically\nAnalyze test: [METRICS]. Calculate: statistical significance (p < 0.05), confidence intervals, effect size, sample size adequacy, statistical power. Decision: ship/iterate/kill. Consider: segment performance, external validity, practical significance."
+      },
+      {
+        "id": "customer-journey-map",
+        "title": "Customer Journey Map",
+        "lang": "text",
+        "tags": ["UX"],
+        "body": "Visualize user experience touchpoints\nMap journey for [PRODUCT]. Stages: awareness, consideration, purchase, retention, advocacy. Per stage: touchpoints, emotions, pain points, opportunities, metrics. Output: journey map + friction analysis + optimization priorities + quick wins."
+      },
+      {
+        "id": "financial-modeling",
+        "title": "Financial Modeling",
+        "lang": "text",
+        "tags": ["FINANCE"],
+        "body": "Build investor-grade projections\nBuild 3-year model: revenue streams, COGS, opex, cash flow, break-even. Scenarios: conservative/base/aggressive. Output: P&L statement + assumptions doc + key metrics (CAC, LTV, burn rate, runway, unit economics) + sensitivity analysis."
+      },
+      {
+        "id": "root-cause-analysis",
+        "title": "Root Cause Analysis",
+        "lang": "text",
+        "tags": ["PROBLEM-SOLVING"],
+        "body": "Identify underlying system failures\nRoot cause for [ISSUE]. Method: 5 Whys + fishbone diagram. Categories: people, process, technology, environment. Output: causal chain, contributing factors, corrective actions, preventive measures, monitoring plan."
+      },
+      {
+        "id": "risk-assessment",
+        "title": "Risk Assessment",
+        "lang": "text",
+        "tags": ["RISK"],
+        "body": "Quantify project uncertainties\nRisk matrix for [PROJECT]. Each risk: probability (1-5), impact (1-5), mitigation strategy, contingency plan, owner. Plot 5x5 matrix. Prioritize: high probability + high impact. Output: risk register + action plan + escalation triggers."
+      },
+      {
+        "id": "competitive-analysis",
+        "title": "Competitive Analysis",
+        "lang": "text",
+        "tags": ["STRATEGY"],
+        "body": "Benchmark against market leaders\nAnalyze competitors: [COMPANIES]. Compare: features, pricing tiers, positioning statements, market share, strengths/weaknesses. Use: SWOT analysis, perceptual mapping. Output: competitive matrix + differentiation opportunities + threat assessment."
+      },
+      {
+        "id": "data-cleaning",
+        "title": "Data Cleaning",
+        "lang": "text",
+        "tags": ["DATA SCIENCE"],
+        "body": "Transform raw data for analysis\nClean dataset: [DATA]. Handle: missing values (imputation strategies), outliers (z-score/IQR method), duplicates, format inconsistencies, encoding errors. Document: decisions made, data quality score (before/after), cleaning script."
+      },
+      {
+        "id": "dashboard-design",
+        "title": "Dashboard Design",
+        "lang": "text",
+        "tags": ["BI"],
+        "body": "Create actionable metric visualizations\nDesign dashboard for [ROLE]. Include: KPIs (leading/lagging indicators), visualization types (justified), filters, drill-down paths. Layout: F-pattern, critical metric top-left. Output: wireframe + metric definitions + refresh strategy."
+      },
+      {
+        "id": "bicohort-analysis",
+        "title": "BICohort Analysis",
+        "lang": "text",
+        "tags": ["ANALYTICS"],
+        "body": "Track user behavior over time\nCohort analysis on [USERS]. Group by: acquisition date, channel, behavior pattern. Metrics: retention curves, revenue per cohort, engagement trends. Time: weekly/monthly. Output: cohort table + retention analysis + actionable insights on improving stickiness."
+      },
+      {
+        "id": "college-student-research-skills",
+        "title": "College Student — Research Skills",
+        "lang": "text",
+        "tags": ["EDUCATION"],
+        "body": "Academic research methodology training:\nCreate comprehensive research training for [TOPIC]. Start: literature review methods, database navigation, citation management. Progress: critical analysis, methodology evaluation, synthesis techniques. End: thesis development, academic writing. Output: step-by-step curriculum + exercises + evaluation rubric."
+      },
+      {
+        "id": "real-estate-agent-market-analysis",
+        "title": "Real Estate Agent — Market Analysis",
+        "lang": "text",
+        "tags": ["REAL ESTATE"],
+        "body": "Property valuation and competitive analysis:\nAnalyze property market for [LOCATION]. Include: comparable sales (last 6 months), price per sq ft trends, days on market, inventory levels, demographic shifts. Output: valuation range + market positioning strategy + pricing recommendations + buyer/seller talking points."
+      },
+      {
+        "id": "sales-professional-objection-handling",
+        "title": "Sales Professional — Objection Handling",
+        "lang": "text",
+        "tags": ["SALES"],
+        "body": "Navigate common buyer resistance:\nCreate objection handling framework for [PRODUCT]. Map: 10 common objections, root concerns, response strategies, proof points, closing techniques. Include: timing cues, tone guidance, follow-up sequences. Output: response scripts + role-play scenarios + success metrics."
+      },
+      {
+        "id": "marketing-manager-campaign-planning",
+        "title": "Marketing Manager — Campaign Planning",
+        "lang": "text",
+        "tags": ["MARKETING"],
+        "body": "Multi-channel campaign strategy:\nPlan campaign for [PRODUCT LAUNCH]. Define: objectives (SMART), target audience, channel mix, budget allocation, creative strategy, timeline. Include: KPIs per channel, attribution model, A/B test plan. Output: campaign brief + Gantt chart + measurement framework."
+      },
+      {
+        "id": "product-manager-feature-prioritization",
+        "title": "Product Manager — Feature Prioritization",
+        "lang": "text",
+        "tags": ["PRODUCT"],
+        "body": "Data-driven roadmap development:\nPrioritize features for [PRODUCT]. Evaluate: user impact, business value, technical complexity, strategic alignment. Use: RICE scoring, opportunity cost analysis, dependency mapping. Output: prioritized backlog + rationale doc + stakeholder communication plan."
+      },
+      {
+        "id": "financial-analyst-investment-thesis",
+        "title": "Financial Analyst — Investment Thesis",
+        "lang": "text",
+        "tags": ["FINANCE"],
+        "body": "Build comprehensive investment cases:\nDevelop investment thesis for [COMPANY]. Analyze: business model, competitive moat, financial health, growth drivers, risks. Include: DCF valuation, comparable analysis, sensitivity scenarios. Output: investment memo + valuation model + recommendation (buy/hold/sell)."
+      },
+      {
+        "id": "hr-professional-interview-framework",
+        "title": "HR Professional — Interview Framework",
+        "lang": "text",
+        "tags": ["HR"],
+        "body": "Structured candidate evaluation:\nDesign interview process for [ROLE]. Create: competency matrix, behavioral questions, technical assessments, scoring rubric, decision criteria. Include: interviewer training guide, bias mitigation strategies, candidate experience optimization. Output: complete interview kit."
+      },
+      {
+        "id": "deck-prompt-1",
+        "title": "Launch-Ready Pitch Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "strict alignment"],
+        "body": `Build a launch-ready pitch deck for [BRAND / PRODUCT / OFFER] that looks like a real high-budget design team made it, not an AI toy. Make it ruthless, elegant, and centered. Every slide must use a strict alignment system, perfect safe margins, zero overlapping objects, zero orphaned elements, and one dominant focal point per slide. No generic gradients, no startup clichés, no stock-photo energy, no fluffy icons, no fake dashboard clutter. Use sharp typography, controlled negative space, disciplined image crops, and cinematic pacing translated into static slides. The deck must feel expensive, modern, fast, and emotionally rewarding to look at. Build for investors / buyers / executive stakeholders. Slides should compress information instead of bloating it. Every layout must feel balanced, intentional, and dead-center clean.`
+      },
+      {
+        "id": "deck-prompt-2",
+        "title": "Black-Tie Brutalist Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "brutalist", "luxury"],
+        "body": `Design a wickedly professional investor deck for [COMPANY] in a black-tie brutalist luxury style. Make it feel like private equity meets avant-garde product launch. Absolute rules: centered composition, no collisions, no overlapping text boxes, no lazy auto-layout chaos, no cornball AI visuals. Use a rigid grid, hard hierarchy, bold typography, narrow copy, oversized statement frames, and immaculate whitespace. Every slide must read in under 3 seconds while still feeling premium and high-taste. The result should hit like a controlled dopamine spike: smooth, undeniable, and surgically composed.`
+      },
+      {
+        "id": "deck-prompt-3",
+        "title": "Site of the Day PowerPoint",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "cinematic", "minimal"],
+        "body": `Create a pitch deck for [TOPIC] that feels like a Site of the Day digital product experience translated into PowerPoint without becoming gimmicky. Prioritize structure, rhythm, and visual authority. Every object must sit cleanly on-grid, centered, and fully separated from every other element. No overlap. No floating nonsense. No decorative filler. Use typography, geometry, and motion-inspired sequencing to create the sensation of momentum. The deck should feel like a premium launch system: sharp, cinematic, minimal, and mature.`
+      },
+      {
+        "id": "deck-prompt-4",
+        "title": "Boardroom-Grade Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "boardroom", "clarity"],
+        "body": `Build a boardroom-grade deck for [PRODUCT / COMPANY] that feels lethal in its clarity. Make every slide centered, balanced, and impossible to misread. No AI-looking layouts. No generic slideware. No weak spacing. No clutter. Use one core visual system across the deck: restrained palette, exact typographic hierarchy, intentional image framing, and clean modular proof blocks. The deck must look like it belongs in front of high-stakes buyers who notice sloppy craft immediately.`
+      },
+      {
+        "id": "deck-prompt-5",
+        "title": "Founder Pitch Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "startup", "founder"],
+        "body": `Design a founder pitch deck for [STARTUP] that is aggressive, clean, and elite. The deck should feel like a premium product launch crossed with a top-tier creative agency treatment. Every slide must remain perfectly centered, grid-locked, and collision-free. Use large headlines, tight supporting copy, bold proof moments, and striking but disciplined visual rhythm. Reject anything that looks like templates, Canva fluff, AI sludge, or fake futurism. Make it hard, clear, and gorgeous.`
+      },
+      {
+        "id": "deck-prompt-6",
+        "title": "Editorial Discipline Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "editorial", "precision"],
+        "body": `Build a pitch deck for [INDUSTRY / OFFER] with immaculate editorial discipline. Think fashion magazine precision fused with enterprise clarity. Every slide must be centered and mathematically composed. No overlap, no drift, no unbalanced margins, no random color noise. Use sharp type, hard crops, sparse but powerful visual fields, and premium spacing. The deck should feel expensive because it is controlled, not because it is loud.`
+      },
+      {
+        "id": "deck-prompt-7",
+        "title": "High-Conviction Sales Deck",
+        "lang": "text",
+        "tags": ["sales deck", "presentation", "high-conviction"],
+        "body": `Create a high-conviction sales deck for [SERVICE / PRODUCT] that makes the audience feel they are looking at a finished market leader, not a work in progress. Use a strict centered layout engine and build every slide so that all text, charts, visuals, and labels remain fully separated, aligned, and readable. No overlapping layers. No overdesigned infographic mess. No buzzword soup. The entire deck must compress complexity into brutal elegance.`
+      },
+      {
+        "id": "deck-prompt-8",
+        "title": "Cinematic Dark-Mode Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "dark-mode", "cinematic"],
+        "body": `Build a cinematic dark-mode pitch deck for [BRAND] that feels smooth, expensive, and technically disciplined. Use black or near-black foundations, one controlled accent color, and typography that carries authority without screaming. Everything must remain centered, non-overlapping, and properly spaced. Simulate motion through layout progression, not cheesy effects. Make every slide feel like a frame from a premium launch film.`
+      },
+      {
+        "id": "deck-prompt-9",
+        "title": "White-Space-Dominant Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "white-space", "elite"],
+        "body": `Design a white-space-dominant pitch deck for [COMPANY / PRODUCT] that feels calm, dangerous, and elite. Use off-white backgrounds, black typography, precise spacing, and centered composition. No fake AI gradients, no glassmorphism junk, no floating widgets, no overlapping objects. Every slide should look effortless but clearly be engineered by someone obsessive about balance and hierarchy.`
+      },
+      {
+        "id": "deck-prompt-10",
+        "title": "Luxury Consulting Investor Deck",
+        "lang": "text",
+        "tags": ["investor deck", "presentation", "luxury", "data storytelling"],
+        "body": `Create an investor deck for [TOPIC] with the emotional reward signal of a luxury website and the decision clarity of a world-class consulting deck. Every slide must follow strict non-overlap rules, perfectly centered focal logic, equalized margins, and coherent visual rhythm. Use bold thesis slides, ruthless proof slides, and controlled data storytelling. It should impress by compression, not decoration.`
+      },
+      {
+        "id": "deck-prompt-11",
+        "title": "Product Launch Deck",
+        "lang": "text",
+        "tags": ["product launch", "presentation", "restraint"],
+        "body": `Build a product launch deck for [PRODUCT] that feels like Apple-level restraint fused with sharper underground edge. Every slide must be centered, balanced, and surgically non-overlapping. Use one dominant visual idea per slide. Kill all filler. No stock mockups unless they look real. No generic 3D nonsense. No bloated copy. Make it feel tactile, fast, and impossible to ignore.`
+      },
+      {
+        "id": "deck-prompt-12",
+        "title": "Modern Firm Agency Deck",
+        "lang": "text",
+        "tags": ["agency deck", "presentation", "consulting", "modern firm"],
+        "body": `Design a deck for [AGENCY / STUDIO / CONSULTING OFFER] that looks like a serious modern firm with taste, not a freelancer template. Use perfect vertical rhythm, centered alignment, disciplined safe zones, and no object overlap anywhere. Build in swagger through typography and pacing, not through cheesy effects. The deck should feel rich, dangerous, and fully in control.`
+      },
+      {
+        "id": "deck-prompt-13",
+        "title": "Venture-Scale Startup Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "venture-scale", "startup"],
+        "body": `Create a venture-scale pitch deck for [STARTUP] that feels compressed, predatory, and polished. Use a hard grid. Center everything with intent. Maintain exact spacing consistency across all slides. Never allow copy boxes, labels, charts, or images to touch or collide. Remove all traces of AI-generated softness. Replace it with sharp hierarchy, visual confidence, and premium restraint.`
+      },
+      {
+        "id": "deck-prompt-14",
+        "title": "Technical Platform SaaS Deck",
+        "lang": "text",
+        "tags": ["technical deck", "presentation", "saas", "b2b"],
+        "body": `Build a technical pitch deck for [B2B / SaaS / PLATFORM] that makes complex ideas feel clean and inevitable. Every slide must remain centered and collision-free. Any charts or diagrams must be simplified to their strongest signal. No dashboard vomit. No visual noise. Use bold thesis statements, modular proof frames, controlled technical diagrams, and executive-grade spacing. Make it feel like advanced systems thinking with elite design judgment.`
+      },
+      {
+        "id": "deck-prompt-15",
+        "title": "High-Taste Culture Brand Deck",
+        "lang": "text",
+        "tags": ["luxury deck", "presentation", "creative", "high-taste"],
+        "body": `Design a high-taste deck for [LUXURY / CREATIVE / CULTURE BRAND] that feels like an Awwwards-caliber experience correctly translated into presentation form. Use centered composition, rigid safe margins, strong image discipline, and total non-overlap. Typography should be sharp and seductive but still readable. Every slide should feel like a poster and a sales tool at once.`
+      },
+      {
+        "id": "deck-prompt-16",
+        "title": "Engineered Strict Layout Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "strict layout", "engineered"],
+        "body": `Create a deck for [PRODUCT / OFFER] that punishes weak layout. Center all major elements. Use a strict baseline grid. Lock every slide to balanced margins and exact spacing intervals. No overlapping text. No stacked chaos. No lazy icon rows. No visual filler. Build a deck that feels engineered, not decorated. The viewer should feel immediate trust because nothing is sloppy.`
+      },
+      {
+        "id": "deck-prompt-17",
+        "title": "Stealth-Wealth Modernist Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "stealth-wealth", "modernist"],
+        "body": `Build a pitch deck for [COMPANY] in a stealth-wealth modernist style. Understated, premium, and lethal. Use restrained color, exact typography, centered hierarchy, and flawless object separation. No noisy backgrounds. No juvenile effects. No corny “innovation” visuals. The deck should feel like expensive taste backed by hard competence.`
+      },
+      {
+        "id": "deck-prompt-18",
+        "title": "Elite Keynote Stage Presentation",
+        "lang": "text",
+        "tags": ["keynote", "presentation", "elite deck", "luxury"],
+        "body": `Design an elite keynote-style deck for [TOPIC] that feels like a stage presentation designed by a luxury digital product team. Every slide must be centered, clean, and non-overlapping, with one undeniable read from distance. Use giant headlines, controlled subcopy, and visual transitions expressed through sequencing instead of gimmicks. Make the deck feel buttery, sharp, and fully composed.`
+      },
+      {
+        "id": "deck-prompt-19",
+        "title": "Template-Drift-Free Deck System",
+        "lang": "text",
+        "tags": ["pitch deck system", "presentation", "custom"],
+        "body": `Create a pitch deck system for [BRAND / PRODUCT / OFFER] with no template drift. All slides must feel like they came from one exact design mind. Use one grid system, one spacing logic, one type hierarchy, one image philosophy, and one motion-inspired pacing model. Every layout must stay centered and every object must remain fully separated and readable. The result should feel custom, brutal, and expensive.`
+      },
+      {
+        "id": "deck-prompt-20",
+        "title": "Meanest Clean Pitch Deck",
+        "lang": "text",
+        "tags": ["pitch deck", "presentation", "clean"],
+        "body": `Build the meanest clean pitch deck possible for [TOPIC]. Make it professional enough for serious money and edgy enough to wake up jaded eyes. Enforce centered layouts, strict balance, non-overlapping content, perfect spacing, and immaculate hierarchy on every single slide. No AI sheen. No fake futurist garbage. No soft startup fluff. Use crisp typography, controlled contrast, sparse but powerful imagery, and slide sequencing that hits like a reward loop.`
+      },
+      {
+        "id": "deck-prompt-addon",
+        "title": "Add-On: Hard Rules for Slides",
+        "lang": "text",
+        "tags": ["constraints", "rules", "slides", "presentation"],
+        "body": `Hard rules: every slide must be centered, grid-aligned, safe-margin clean, fully non-overlapping, presentation-export ready, mobile-legible in screenshot form, and visually consistent with a premium professional deck built by humans with taste.`
+      }
+    ];
+
+    const $ = (s) => document.querySelector(s);
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          fallbackCopy(text);
+        }
+      } catch {
+        fallbackCopy(text);
+      }
+    }
+
+    function padPct(n){
+      const s = String(n);
+      return s.length === 1 ? `0${s}` : s;
+    }
+
+    function updateScrollPct(){
+      const el = $("#scrollPct");
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const pct = max <= 0 ? 0 : Math.round((window.scrollY / max) * 100);
+      el.textContent = `${padPct(Math.max(0, Math.min(100, pct)))}%`;
+    }
+
+    function normalize(s){ return (s || "").toLowerCase().trim(); }
+
+    let activeTag = "All";
+
+    function getQueryState(){
+      const u = new URL(window.location.href);
+      return {
+        q: u.searchParams.get("q") || "",
+        tag: u.searchParams.get("tag") || "All",
+      };
+    }
+
+    function setQueryState({ q, tag }){
+      const u = new URL(window.location.href);
+      if (q) u.searchParams.set("q", q); else u.searchParams.delete("q");
+      if (tag && tag !== "All") u.searchParams.set("tag", tag); else u.searchParams.delete("tag");
+      
+      try {
+        history.replaceState(null, "", u.toString());
+      } catch (err) {
+        console.warn("History API prevented by sandbox environment.", err);
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function renderTags(){
+      const tagsEl = $("#tags");
+      const tags = new Set(["All"]);
+      PROMPTS.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
+
+      tagsEl.innerHTML = "";
+      [...tags].forEach(t => {
+        const b = document.createElement("button");
+        b.className = `tag${t === activeTag ? " is-active" : ""}`;
+        b.type = "button";
+        b.textContent = t;
+        b.addEventListener("click", () => {
+          activeTag = t;
+          const q = $("#q").value || "";
+          setQueryState({ q, tag: activeTag });
+          render();
+          renderTags();
+        });
+        tagsEl.appendChild(b);
+      });
+    }
+
+    function cardTemplate(p){
+      const safeId = p.id || crypto.randomUUID();
+      const title = p.title || "Untitled";
+      const lang = p.lang || "text";
+      const body = p.body || "";
+
+      return `
+        <section class="code-card" id="${safeId}" data-code-card>
+          <header class="code-card__header">
+            <div class="code-card__left">
+              <span class="code-card__lang">${lang}</span>
+              <span class="code-card__title">${title}</span>
+            </div>
+
+            <div class="code-card__actions">
+              <button class="copy" type="button" data-prompt-btn aria-label="Copy prompt">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M9 6h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 18H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span data-prompt-label>Copy Prompt</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="code-card__body">
+            <pre><code data-code>${escapeHtml(body)}</code></pre>
+          </div>
+        </section>
+      `;
+    }
+
+    function wireCardEvents(root){
+      root.querySelectorAll("[data-code-card]").forEach(card => {
+        const promptBtn = card.querySelector("[data-prompt-btn]");
+        const codeEl = card.querySelector("[data-code]");
+        const promptLabel = card.querySelector("[data-prompt-label]");
+
+        promptBtn.addEventListener("click", async () => {
+          await copyText(codeEl.textContent);
+          const old = promptLabel.textContent;
+          promptLabel.textContent = "Copied";
+          promptBtn.classList.add("is-copied");
+          setTimeout(() => { promptLabel.textContent = old; promptBtn.classList.remove("is-copied"); }, 1100);
+        });
+      });
+    }
+
+    function render(){
+      const grid = $("#grid");
+      const count = $("#count");
+      const q = normalize($("#q").value);
+
+      const filtered = PROMPTS.filter(p => {
+        const inTag = activeTag === "All" || (p.tags || []).includes(activeTag);
+        if (!inTag) return false;
+        if (!q) return true;
+        const hay = normalize(`${p.title || ""}\n${p.body || ""}\n${(p.tags || []).join(" ")}`);
+        return hay.includes(q);
+      });
+
+      count.textContent = `${filtered.length} / ${PROMPTS.length} prompts`;
+      grid.innerHTML = filtered.map(cardTemplate).join("");
+      wireCardEvents(grid);
+    }
+
+    function init(){
+      const state = getQueryState();
+      activeTag = state.tag || "All";
+
+      $("#q").value = state.q || "";
+      $("#q").addEventListener("input", () => {
+        setQueryState({ q: $("#q").value, tag: activeTag });
+        render();
+      });
+
+      $("#clear").addEventListener("click", () => {
+        $("#q").value = "";
+        activeTag = "All";
+        setQueryState({ q: "", tag: "All" });
+        renderTags();
+        render();
+      });
+
+      renderTags();
+      render();
+
+      updateScrollPct();
+      window.addEventListener("scroll", updateScrollPct, { passive: true });
+
+      if (location.hash) {
+        const el = document.querySelector(location.hash);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>
