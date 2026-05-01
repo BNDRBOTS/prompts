@@ -1,4 +1,4 @@
-# Prompt-Vault-Retro-Code-Cards
+# Retro Card Prompt Vault
 ## Single-purpose site: 
 - A stack of prompts for various use cases.
 - **Copy Prompt** button
