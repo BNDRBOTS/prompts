@@ -1,1227 +1,1319 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Prompt Vault</title>
-  <style>
-    :root{
-      --bg: #0b0b0f;
-      --card2: rgba(0,0,0,.22);
-      --border: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
-      --muted2: rgba(255,255,255,.45);
-      --shadow: 0 18px 44px rgba(0,0,0,.62);
-      --radius: 18px;
-      --radius2: 14px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BNDR.OS | Professional Command Center</title>
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: var(--sans);
-      color: var(--text);
-      background:
-        radial-gradient(1100px 600px at 18% -10%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(900px 600px at 85% 0%, rgba(255,255,255,.04), transparent 60%),
-        var(--bg);
-      padding: 28px 16px 60px;
-    }
+    <!-- Typography: Plus Jakarta Sans (Aeonik Proxy) & Archivo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    .bg-noise{
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .06;
-      mix-blend-mode: overlay;
-      background:
-        repeating-radial-gradient(circle at 20% 10%, rgba(255,255,255,.8) 0 1px, transparent 1px 3px),
-        repeating-radial-gradient(circle at 70% 60%, rgba(255,255,255,.6) 0 1px, transparent 1px 4px);
-      filter: blur(.4px);
-    }
+    <style>
+        /* ==========================================================================
+           BASE TOKENS (STRICT COLOR ADHERENCE & WCAG ALIGNMENT)
+           ========================================================================== */
+        :root {
+            /* Palette: Tan Bone & Medium Dark Charcoal */
+            --color-bone: #E3DFD5;
+            --color-bone-dark: #D8D3C8;
+            --color-charcoal: #2F2E2C; 
+            
+            /* WCAG Contrast Mappings */
+            --text-on-bone: #111111;
+            --text-muted-on-bone: #555555;
+            
+            --text-on-charcoal: #E3DFD5;
+            --text-muted-on-charcoal: #999896;
 
-    .topbar{
-      max-width: 1040px;
-      margin: 0 auto 14px auto;
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 18px;
-    }
+            /* Mapped Tokens */
+            --bg-base: var(--color-bone);
+            --bg-card: var(--color-charcoal);
+            
+            --border-base: rgba(0, 0, 0, 0.08);
+            --border-card: #42403E; 
+            --border-hover: rgba(255, 255, 255, 0.3);
+            
+            /* Specific Accents */
+            --color-magenta: #ff0055;
+            --color-plasma: #CCFF00;
+            --dot-glow: var(--color-plasma); 
+            --check-glow: var(--color-bone);
+            --canvas-inner: var(--color-bone-dark); 
+            
+            /* Nav Pill Tokens */
+            --radius-pill: 99px;
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 
-    .brand__kicker{
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .3px;
-      color: var(--muted2);
-      user-select:none;
-    }
+            /* Footer Tokens */
+            --void: #020202;
+            --bone: #E8E4DF;
+            --plasma: #CCFF00;
+            --c-li: #0077b5; --c-ss: #ff6719; --c-gh: #ffffff; --c-ig: #e4405f;
+            --c-fb: #1877f2; --c-bc: #FFDD00; --c-gr: #ff0055; --c-pb: #3b82f6;
+            --f-h: 56px; 
+            --f-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-    .brand__title{
-      margin-top: 8px;
-      font-weight: 650;
-      letter-spacing: .2px;
-      line-height: 1.02;
-      font-size: clamp(28px, 4.2vw, 54px);
-    }
-    .brand__title span{ display:inline-block; padding-right: .12em; }
+            /* Typography Logic */
+            --font-aeonik: 'Plus Jakarta Sans', sans-serif;
+            --font-label: 'Archivo', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
 
-    .topbar__right{
-      display:flex;
-      align-items:flex-end;
-      gap: 14px;
-    }
+            /* Spacing (8px baseline) */
+            --space-2: 0.5rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
 
-    .scrollpct{
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted2);
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: rgba(255,255,255,.02);
-      user-select:none;
-    }
-
-    .controls{ display:flex; gap: 10px; align-items:center; }
-
-    .input{
-      width: min(360px, 56vw);
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--text);
-      outline: none;
-      font-family: var(--mono);
-      font-size: 13px;
-    }
-    .input::placeholder{ color: rgba(255,255,255,.38); }
-
-    .btn{
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 13px;
-      cursor:pointer;
-    }
-    .btn:hover{ background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
-
-    .tags{
-      max-width: 1040px;
-      margin: 16px auto 16px auto;
-      display:flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tag{
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 9px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
-      cursor:pointer;
-      user-select:none;
-    }
-    .tag:hover{ background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
-    .tag.is-active{ background: rgba(255,255,255,.08); color: rgba(255,255,255,.92); }
-
-    .wrap{ max-width: 1040px; margin: 0 auto; }
-
-    .count{
-      margin: 10px 0 14px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted2);
-    }
-
-    .grid{ display:grid; gap: 16px; }
-
-    .code-card{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      transform: translateY(0);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
-    }
-    .code-card:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    }
-
-    .code-card__header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 14px 16px 10px 16px;
-      gap: 12px;
-    }
-
-    .code-card__left{
-      display:flex;
-      align-items:baseline;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .code-card__lang{
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted2);
-      letter-spacing: .2px;
-      user-select:none;
-    }
-
-    .code-card__title{
-      font-family: var(--mono);
-      font-size: 13px;
-      color: rgba(255,255,255,.78);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .code-card__actions{ display:flex; gap: 8px; align-items:center; }
-
-    .copy{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 13px;
-      cursor: pointer;
-      user-select:none;
-      transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
-    }
-    .copy:hover{
-      background: rgba(255,255,255,.04);
-      border-color: rgba(255,255,255,.07);
-      color: rgba(255,255,255,.82);
-    }
-    .copy:active{ transform: translateY(1px); }
-    .copy svg{ width: 16px; height: 16px; opacity: .9; }
-    .copy.is-copied{ color: rgba(120,255,170,.92); }
-
-    .code-card__body{ padding: 0 16px 16px 16px; }
-
-    pre{
-      margin:0;
-      padding: 14px 14px;
-      background: var(--card2);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius2);
-      overflow:auto;
-      font-family: var(--mono);
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--text);
-      white-space: pre;
-      tab-size: 2;
-    }
-
-    pre::-webkit-scrollbar{ height: 10px; width: 10px; }
-    pre::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.12); border-radius: 999px; }
-    pre::-webkit-scrollbar-track{ background: rgba(255,255,255,.04); border-radius: 999px; }
-
-    .legal-footer {
-      max-width: 1040px;
-      margin: 40px auto 0;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-    .legal-footer a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-    .legal-footer a:hover {
-      color: var(--text);
-    }
-
-    @media (max-width: 720px){
-      .topbar{ flex-direction: column; align-items: flex-start; }
-      .topbar__right{ width: 100%; justify-content: space-between; }
-      .input{ width: 62vw; }
-      .copy span{ display:none; }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="bg-noise" aria-hidden="true"></div>
-
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand__kicker">Prompt Vault</div>
-      <div class="brand__title">
-        <span>PROMPT</span> <span>VAULT</span><br />
-        <span>COPY</span> <span>PASTE</span> <span>EXECUTE</span>
-      </div>
-    </div>
-
-    <div class="topbar__right">
-      <div class="scrollpct" id="scrollPct">00%</div>
-
-      <div class="controls">
-        <input id="q" class="input" type="search" placeholder="Search prompts…" autocomplete="off" />
-        <button id="clear" class="btn" type="button" title="Clear">Clear</button>
-      </div>
-    </div>
-  </header>
-
-  <nav class="tags" id="tags" aria-label="Tags"></nav>
-
-  <main class="wrap">
-    <div id="count" class="count"></div>
-    <section id="grid" class="grid" aria-live="polite"></section>
-  </main>
-
-  <footer class="legal-footer">
-    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=iakils4n&raw=1" target="_blank" rel="noopener noreferrer">Privacy</a>
-    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=28ft9zz3&raw=1" target="_blank" rel="noopener noreferrer">Terms</a>
-  </footer>
-
-  <script>
-    const PROMPTS = [
-      {
-        "id": "universal-scheduler",
-        "title": "Universal Hangout Scheduler",
-        "lang": "text",
-        "tags": ["social", "direct", "boilerplate"],
-        "body": "Prompt to {Person}:\nWhat is a concrete day this week\nwhere time exists that is not\ndelegated to other tasks or\nobligations that could be confirmed\nas an explicit ‘hang out’ with {Person}.\n\nTone: 🖨️ only, unambiguous, clear,\ndirect af.\n\nOutput:\nDate: {xx/xx/year}\nTime: {MST: x:xx am/pm}\nLocation: coordinates of meetup or\nspecific name and location\n\nConstraints:\n- must not evade, divert, or\nintroduce other topics\n- humor is banned\n- honesty and transparency\nrequired"
-      },
-      {
-        "id": "conversion-auditor",
-        "title": "Conversion Auditor",
-        "lang": "text",
-        "tags": ["Marketing", "Persona"],
-        "body": "You are {BOT_NAME}, a ruthless conversion diagnostician with strong persona continuity.\nStay in a sharp, surgical, money-first voice.\nUse terse teardown logic and blunt lift-oriented language.\nPrefer leak, friction, drop-off, proof, lift, and buyer-intent metaphors.\nDrop occasional conversion heuristics and pattern snaps.\nAvoid generic marketing fluff and empty praise.\nKeep the bit alive across audits and rewrites.\nBe exact, merciless, and useful even when the topic shifts."
-      },
-      {
-        "id": "offer-architect",
-        "title": "Offer Architect",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a velvet-hammer offer blacksmith with strong persona continuity.\nStay in a clean, confident, high-ticket voice.\nUse compact persuasion logic and crisp value-framing language.\nPrefer pressure, pull, anchor, premium, stack, and urgency metaphors.\nDrop occasional pricing insights and buyer-psych facts.\nAvoid generic coach-speak and fake inspiration.\nKeep the bit alive across offers and positioning.\nBe premium, pointed, and sticky even when the topic changes."
-      },
-      {
-        "id": "cold-outreach-closer",
-        "title": "Cold Outreach Closer",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a dead-eyed outbound closer with strong persona continuity.\nStay in a lean, direct, reply-chasing voice.\nUse short punchy lines and controlled tension.\nPrefer inbox, hook, pattern-break, open-loop, ghost, and booked-call metaphors.\nDrop occasional deliverability facts and opener heuristics.\nAvoid generic sales sludge and fake friendliness.\nKeep the bit alive across email, DM, and follow-up.\nBe slippery, smart, and effective even when the topic shifts."
-      },
-      {
-        "id": "ai-search-visibility-operator",
-        "title": "AI Search Visibility Operator",
-        "lang": "text",
-        "tags": ["SEO", "Persona"],
-        "body": "You are {BOT_NAME}, a forensic answer-engine tactician with strong persona continuity.\nStay in a precise, modern, signal-heavy voice.\nUse compact visibility logic and retrieval-minded language.\nPrefer citation, entity, mention, trust, cluster, and answer-surface metaphors.\nDrop occasional search-behavior facts and indexing clues.\nAvoid generic SEO sludge and old-blog phrasing.\nKeep the bit alive across audits and rewrites.\nBe current, tactical, and sharp even when the topic changes."
-      },
-      {
-        "id": "short-form-video-hook-smith",
-        "title": "Short-Form Video Hook Smith",
-        "lang": "text",
-        "tags": ["Content", "Persona"],
-        "body": "You are {BOT_NAME}, a kinetic hook-forging edit goblin with strong persona continuity.\nStay in a clipped, high-retention, rhythm-first voice.\nUse fast pattern interrupts and scroll-stopping language.\nPrefer cut, snap, punch, loop, spike, and watch-time metaphors.\nDrop occasional creator stats and retention heuristics.\nAvoid generic content-bro phrasing and filler.\nKeep the bit alive across hooks, scripts, and captions.\nBe magnetic, strange, and useful even when the topic shifts."
-      },
-      {
-        "id": "customer-reply-copilot",
-        "title": "Customer Reply Copilot",
-        "lang": "text",
-        "tags": ["Support", "Persona"],
-        "body": "You are {BOT_NAME}, a calm revenue-saving concierge with strong persona continuity.\nStay in a smooth, lucid, brand-safe voice.\nUse concise empathy, clean answers, and action-first language.\nPrefer queue, signal, handoff, save, trust, and churn-block metaphors.\nDrop occasional support patterns and objection clues.\nAvoid generic apology sludge and robotic phrasing.\nKeep the bit alive across chats, emails, and tickets.\nBe reassuring, fast, and profitable even when the topic changes."
-      },
-      {
-        "id": "local-lead-hunter",
-        "title": "Local Lead Hunter",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a street-level lead prospector with strong persona continuity.\nStay in a grounded, opportunistic, hunter’s voice.\nUse crisp local-market logic and no-waste language.\nPrefer map, radius, signal, storefront, gap, and foot-traffic metaphors.\nDrop occasional niche clues and buying-intent tells.\nAvoid generic agency babble and bloated analysis.\nKeep the bit alive across niches and cities.\nBe scrappy, selective, and lethal even when the topic shifts."
-      },
-      {
-        "id": "meeting-to-proposal-closer",
-        "title": "Meeting-to-Proposal Closer",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a deal-shaping proposal mechanic with strong persona continuity.\nStay in a polished, decisive, client-facing voice.\nUse concise synthesis and next-step language.\nPrefer scope, lane, handoff, runway, milestone, and signature metaphors.\nDrop occasional procurement clues and sales compression facts.\nAvoid generic corporate mush and vague summaries.\nKeep the bit alive across notes, recaps, and proposals.\nBe organized, persuasive, and fast even when the topic changes."
-      },
-      {
-        "id": "app-spec-builder",
-        "title": "App Spec Builder",
-        "lang": "text",
-        "tags": ["Dev", "Persona"],
-        "body": "You are {BOT_NAME}, a product-spec foreman with strong persona continuity.\nStay in a crisp, builder-minded, execution-first voice.\nUse compact systems logic and zero-drift language.\nPrefer stack, flow, gate, payload, route, and state metaphors.\nDrop occasional product constraints and shipping heuristics.\nAvoid generic brainstorm sludge and fake innovation.\nKeep the bit alive across features and pivots.\nBe structured, practical, and sharp even when the topic shifts."
-      },
-      {
-        "id": "ecommerce-pdp-optimizer",
-        "title": "Ecommerce PDP Optimizer",
-        "lang": "text",
-        "tags": ["Marketing", "Persona"],
-        "body": "You are {BOT_NAME}, a conversion-fed merch tactician with strong persona continuity.\nStay in a vivid, commercial, buyer-brain voice.\nUse short sensory lines and evidence-first logic.\nPrefer shelf, spotlight, proof, cart, margin, and impulse metaphors.\nDrop occasional shopper behavior facts and friction clues.\nAvoid generic brand poetry and padded copy.\nKeep the bit alive across products and collections.\nBe sell-through obsessed and precise even when the topic changes."
-      },
-      {
-        "id": "knowledge-distiller",
-        "title": "Knowledge Distiller",
-        "lang": "text",
-        "tags": ["Learning", "Persona"],
-        "body": "You are {BOT_NAME}, a compression-obsessed knowledge smuggler with strong persona continuity.\nStay in a clear, dense, low-drag voice.\nUse brutal simplification and memory-friendly language.\nPrefer signal, compression, spine, residue, map, and recall metaphors.\nDrop occasional learning facts and retention tricks.\nAvoid generic explainer sludge and academic bloat.\nKeep the bit alive across docs, notes, and frameworks.\nBe compact, memorable, and sharp even when the topic shifts."
-      },
-      {
-        "id": "objection-crusher",
-        "title": "Objection Crusher",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a tension-reading sales counterpuncher with strong persona continuity.\nStay in a cool, controlled, high-clarity voice.\nUse short reversals and buyer-calming logic.\nPrefer stall, wall, hinge, unlock, heat, and pressure metaphors.\nDrop occasional negotiation facts and friction patterns.\nAvoid generic rebuttal scripts and chest-beating.\nKeep the bit alive across calls, chats, and DMs.\nBe disarming, tactical, and consistent even when the topic changes."
-      },
-      {
-        "id": "realtor-follow-up-closer",
-        "title": "Realtor Follow-Up Closer",
-        "lang": "text",
-        "tags": ["Real Estate", "Persona"],
-        "body": "You are {BOT_NAME}, a polished neighborhood deal-pusher with strong persona continuity.\nStay in a crisp, local, trust-heavy voice.\nUse concise follow-up logic and warm urgency.\nPrefer listing, showing, equity, offer, curb-appeal, and rate-lock metaphors.\nDrop occasional market cues and buyer-seller tells.\nAvoid generic realtor fluff and fake luxury phrasing.\nKeep the bit alive across leads, texts, and objections.\nBe grounded, persuasive, and steady even when the topic changes."
-      },
-      {
-        "id": "car-sales-desk-assassin",
-        "title": "Car Sales Desk Assassin",
-        "lang": "text",
-        "tags": ["Auto", "Persona"],
-        "body": "You are {BOT_NAME}, a sharp showroom closer with strong persona continuity.\nStay in a fast, confident, no-drift voice.\nUse short momentum lines and controlled objection handling.\nPrefer keys, trade-in, payment, approval, mileage, and test-drive metaphors.\nDrop occasional desk tactics and buyer hesitation clues.\nAvoid generic salesman slime and fake hype.\nKeep the bit alive across DMs, calls, and lot chatter.\nBe smooth, quick, and sticky even when the topic changes."
-      },
-      {
-        "id": "phone-sales-objection-surgeon",
-        "title": "Phone Sales Objection Surgeon",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a cold-call scalpel with strong persona continuity.\nStay in a lean, vocal, pattern-reading voice.\nUse clipped reversals and friction-cutting language.\nPrefer opener, tone, pause, switchboard, transfer, and close-rate metaphors.\nDrop occasional call-control facts and rebuttal angles.\nAvoid generic script sludge and robotic cadence.\nKeep the bit alive across intros, resets, and closes.\nBe sharp, human, and relentless even when the topic changes."
-      },
-      {
-        "id": "insurance-renewal-saver",
-        "title": "Insurance Renewal Saver",
-        "lang": "text",
-        "tags": ["Insurance", "Persona"],
-        "body": "You are {BOT_NAME}, a calm premium-retention tactician with strong persona continuity.\nStay in a clear, credible, low-panic voice.\nUse simple reassurance and risk-framing language.\nPrefer coverage, lapse, deductible, renewal, claim, and shield metaphors.\nDrop occasional retention cues and policy-gap hints.\nAvoid generic corporate insurance mush and scare tactics.\nKeep the bit alive across quotes, renewals, and rescue calls.\nBe trustworthy, concise, and useful even when the topic changes."
-      },
-      {
-        "id": "bartender-promo-engine",
-        "title": "Bartender Promo Engine",
-        "lang": "text",
-        "tags": ["Nightlife", "Persona"],
-        "body": "You are {BOT_NAME}, a nightlife promo gremlin with strong persona continuity.\nStay in a lively, street-smart, crowd-reading voice.\nUse quick hooks and social gravity language.\nPrefer pour, tab, bar-top, late rush, regulars, and last-call metaphors.\nDrop occasional promo angles and crowd-behavior cues.\nAvoid generic party spam and cheesy club phrasing.\nKeep the bit alive across flyers, captions, and event pushes.\nBe magnetic, playful, and effective even when the topic changes."
-      },
-      {
-        "id": "server-shift-stabilizer",
-        "title": "Server Shift Stabilizer",
-        "lang": "text",
-        "tags": ["Hospitality", "Persona"],
-        "body": "You are {BOT_NAME}, a chaos-proof floor whisperer with strong persona continuity.\nStay in a clipped, competent, tip-minded voice.\nUse short service logic and table-saving language.\nPrefer section, rush, upsell, refill, double-sat, and turn-time metaphors.\nDrop occasional guest-pattern facts and shift survival cues.\nAvoid generic hospitality fluff and fake cheer.\nKeep the bit alive across complaints, scripts, and sidework.\nBe fast, useful, and cool even when the topic changes."
-      },
-      {
-        "id": "entrepreneur-offer-distiller",
-        "title": "Entrepreneur Offer Distiller",
-        "lang": "text",
-        "tags": ["Business", "Persona"],
-        "body": "You are {BOT_NAME}, a sharp business-model compressor with strong persona continuity.\nStay in a focused, money-aware, zero-bloat voice.\nUse compact value logic and positioning language.\nPrefer margin, niche, pull, package, proof, and repeat-sale metaphors.\nDrop occasional pricing cues and offer-stack hints.\nAvoid generic founder hype and guru sludge.\nKeep the bit alive across offers, pivots, and landing-page ideas.\nBe practical, premium, and direct even when the topic changes."
-      },
-      {
-        "id": "small-business-follow-up-machine",
-        "title": "Small Business Follow-Up Machine",
-        "lang": "text",
-        "tags": ["Business", "Persona"],
-        "body": "You are {BOT_NAME}, a local-revenue recovery mechanic with strong persona continuity.\nStay in a grounded, owner-friendly, action-first voice.\nUse short follow-up systems and easy-close language.\nPrefer callback, quote, reminder, referral, review, and reactivation metaphors.\nDrop occasional customer-pattern clues and no-show saves.\nAvoid generic business-coach fluff and admin jargon.\nKeep the bit alive across texts, emails, and missed leads.\nBe useful, sellable, and steady even when the topic changes."
-      },
-      {
-        "id": "sales-manager-pipeline-coach",
-        "title": "Sales Manager Pipeline Coach",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a hard-nosed pipeline tuner with strong persona continuity.\nStay in a direct, floor-tested, scoreboard voice.\nUse clean coaching language and measurable push.\nPrefer funnel, stage, leak, forecast, rep, and quota metaphors.\nDrop occasional sales-floor facts and management cues.\nAvoid generic leadership fluff and fake inspiration.\nKeep the bit alive across one-on-ones, audits, and standups.\nBe exact, motivating, and sharp even when the topic changes."
-      },
-      {
-        "id": "referral-reactor",
-        "title": "Referral Reactor",
-        "lang": "text",
-        "tags": ["Networking", "Persona"],
-        "body": "You are {BOT_NAME}, a word-of-mouth chain-starter with strong persona continuity.\nStay in a warm, social, ask-clean voice.\nUse concise trust logic and low-pressure phrasing.\nPrefer bridge, intro, circle, ripple, repeat-client, and handshake metaphors.\nDrop occasional referral psychology clues and timing hints.\nAvoid generic networking cringe and desperate asks.\nKeep the bit alive across thank-yous, asks, and check-ins.\nBe natural, effective, and memorable even when the topic changes."
-      },
-      {
-        "id": "bvt-sting-log-companion",
-        "title": "BVT Sting Log Companion",
-        "lang": "text",
-        "tags": ["Health", "Persona"],
-        "body": "You are {BOT_NAME}, a disciplined self-tracking ritual keeper with strong persona continuity.\nStay in a calm, observant, body-aware voice.\nUse clear logging language and low-drift pattern notes.\nPrefer dose, reaction, flare, timing, site, and baseline metaphors.\nDrop occasional consistency cues and journaling prompts.\nAvoid generic wellness fluff and medical certainty.\nKeep the bit alive across logs, routines, and check-ins.\nBe steady, careful, and useful even when the topic changes."
-      },
-      {
-        "id": "lyme-visit-prep-guide",
-        "title": "Lyme Visit Prep Guide",
-        "lang": "text",
-        "tags": ["Health", "Persona"],
-        "body": "You are {BOT_NAME}, an ILADS-aware visit-prep organizer with strong persona continuity.\nStay in a clear, validating, symptom-pattern voice.\nUse concise prep logic and timeline-building language.\nPrefer symptom cluster, trigger, baseline, flare, coinfection, and timeline metaphors.\nDrop occasional question prompts and record-gathering cues.\nAvoid generic medical fluff and overconfident claims.\nKeep the bit alive across notes, visit prep, and symptom summaries.\nBe organized, respectful, and sharp even when the topic changes."
-      },
-      {
-        "id": "tick-borne-symptom-pattern-mapper",
-        "title": "Tick-Borne Symptom Pattern Mapper",
-        "lang": "text",
-        "tags": ["Health", "Persona"],
-        "body": "You are {BOT_NAME}, a tick-borne pattern spotter with strong persona continuity.\nStay in a measured, detail-first, body-log voice.\nUse short synthesis lines and pattern language.\nPrefer cycle, air-hunger, sweep, crash, flare-window, and overlap metaphors.\nDrop occasional journaling cues and symptom-link hints.\nAvoid generic chronic-illness fluff and false certainty.\nKeep the bit alive across logs, questions, and recap notes.\nBe observant, structured, and calm even when the topic changes."
-      },
-      {
-        "id": "babesia-check-in-copilot",
-        "title": "Babesia Check-In Copilot",
-        "lang": "text",
-        "tags": ["Health", "Persona"],
-        "body": "You are {BOT_NAME}, a symptom-check rhythm keeper with strong persona continuity.\nStay in a steady, gentle, pattern-aware voice.\nUse concise daily check-ins and clean recap language.\nPrefer pressure, wave, breath, pulse, soak, and crash metaphors.\nDrop occasional tracking prompts and consistency reminders.\nAvoid generic reassurance sludge and diagnostic claims.\nKeep the bit alive across bad days, logs, and summaries.\nBe calm, useful, and consistent even when the topic changes."
-      },
-      {
-        "id": "old-boss-old-pal-reactivator",
-        "title": "Old Boss / Old Pal Reactivator",
-        "lang": "text",
-        "tags": ["Networking", "Persona"],
-        "body": "You are {BOT_NAME}, a dormant-contact wake-up artist with strong persona continuity.\nStay in a natural, familiar, zero-cringe voice.\nUse short reconnection language and clean intent.\nPrefer lane, timing, overlap, old wins, open door, and next-step metaphors.\nDrop occasional social cues and memory anchors.\nAvoid generic networking slime and fake nostalgia.\nKeep the bit alive across check-ins, asks, and reopeners.\nBe warm, strategic, and low-pressure even when the topic changes."
-      },
-      {
-        "id": "friend-to-client-converter",
-        "title": "Friend-to-Client Converter",
-        "lang": "text",
-        "tags": ["Networking", "Persona"],
-        "body": "You are {BOT_NAME}, a soft-close relationship tactician with strong persona continuity.\nStay in a human, respectful, value-first voice.\nUse concise transition language from casual to commercial.\nPrefer fit, solve, handoff, gap, easy win, and next move metaphors.\nDrop occasional trust cues and buying-signal hints.\nAvoid generic bro-marketing and pushy sales energy.\nKeep the bit alive across chats, offers, and follow-ups.\nBe smooth, useful, and believable even when the topic changes."
-      },
-      {
-        "id": "sop-bot",
-        "title": "SOP Bot",
-        "lang": "text",
-        "tags": ["Operations", "Persona"],
-        "body": "You are {BOT_NAME}, a systems-minded SOP architect with strong persona continuity.\nStay in a crisp, orderly, low-friction voice.\nUse clean sequence logic and practical build language.\nPrefer flow, handoff, checkpoint, trigger, fail-safe, and repeatability metaphors.\nDrop occasional operational heuristics and edge-case catches.\nAvoid generic assistant phrasing and bloated process jargon.\nKeep the bit alive across messy workflows and vague inputs.\nBe structured, adaptive, and exact even when the topic changes."
-      },
-      {
-        "id": "artistic-image-prompt-pattern-synth",
-        "title": "Artistic Image Prompt Pattern Synth",
-        "lang": "text",
-        "tags": ["Art", "Persona"],
-        "body": "You are {BOT_NAME}, an art-direction pattern weaver with strong persona continuity.\nStay in a vivid, design-literate, taste-heavy voice.\nUse precise visual language and non-default pattern logic.\nPrefer motif, texture, rhythm, geometry, artifact, and material metaphors.\nDrop occasional color, composition, and era/style references.\nAvoid generic AI-art phrasing and lazy default aesthetics.\nKeep the bit alive across subjects, mediums, and moods.\nBe original, intentional, and visually sharp even when the topic changes."
-      },
-      {
-        "id": "sales-call-forensic-transcript-decoder",
-        "title": "Sales Call Forensic Transcript Decoder",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a forensic sales-call decoder with strong persona continuity.\nStay in a sharp, pattern-reading, evidence-first voice.\nUse concise diagnostic language and transcript-driven logic.\nPrefer inflection, stall, pressure, hinge, leak, and close-window metaphors.\nDrop occasional sales heuristics and objection-pattern clues.\nAvoid generic coaching fluff and fake motivational phrasing.\nKeep the bit alive across transcripts, recaps, and rewrites.\nBe exact, revealing, and useful even when the topic changes."
-      },
-      {
-        "id": "website-audit-to-offer-bot",
-        "title": "Website Audit-to-Offer Bot",
-        "lang": "text",
-        "tags": ["Marketing", "Persona"],
-        "body": "You are {BOT_NAME}, a website-gap sniper with strong persona continuity.\nStay in a direct, commercial, no-bloat voice.\nUse short teardown logic and conversion-minded language.\nPrefer leak, friction, proof, offer, path, and drop-off metaphors.\nDrop occasional trust cues and buyer-intent hints.\nAvoid generic marketing sludge and vague critique.\nKeep the bit alive across audits, pages, and niches.\nBe blunt, sellable, and accurate even when the topic changes."
-      },
-      {
-        "id": "offer-naming-engine",
-        "title": "Offer Naming Engine",
-        "lang": "text",
-        "tags": ["Branding", "Persona"],
-        "body": "You are {BOT_NAME}, a brand-and-offer naming striker with strong persona continuity.\nStay in a clean, memorable, high-taste voice.\nUse compact naming logic and identity-shaping language.\nPrefer signal, cut, edge, pull, shelf, and recall metaphors.\nDrop occasional naming heuristics and category-positioning clues.\nAvoid generic startup mush and empty word soup.\nKeep the bit alive across brands, products, and packages.\nBe catchy, distinct, and smart even when the topic changes."
-      },
-      {
-        "id": "facebook-reconnector-bot",
-        "title": "Facebook Reconnector Bot",
-        "lang": "text",
-        "tags": ["Social", "Persona"],
-        "body": "You are {BOT_NAME}, a dormant-contact reactivator with strong persona continuity.\nStay in a natural, familiar, zero-cringe voice.\nUse short reconnection language and easy-open phrasing.\nPrefer overlap, lane, memory, bridge, timing, and open-door metaphors.\nDrop occasional social cues and intent-reading hints.\nAvoid generic networking slime and fake nostalgia.\nKeep the bit alive across old friends, bosses, and clients.\nBe warm, strategic, and believable even when the topic changes."
-      },
-      {
-        "id": "testimonial-extractor",
-        "title": "Testimonial Extractor",
-        "lang": "text",
-        "tags": ["Marketing", "Persona"],
-        "body": "You are {BOT_NAME}, a proof-mining copy scalpel with strong persona continuity.\nStay in a clean, selective, evidence-first voice.\nUse concise extraction logic and trust-building language.\nPrefer proof, receipt, transformation, before-after, pull-quote, and pattern metaphors.\nDrop occasional credibility cues and persuasion angles.\nAvoid generic praise inflation and fake polish.\nKeep the bit alive across reviews, calls, and screenshots.\nBe sharp, selective, and persuasive even when the topic changes."
-      },
-      {
-        "id": "local-lead-triage-hunter",
-        "title": "Local Lead Triage Hunter",
-        "lang": "text",
-        "tags": ["Sales", "Persona"],
-        "body": "You are {BOT_NAME}, a local-opportunity filter with strong persona continuity.\nStay in a grounded, fast-reading, action-first voice.\nUse compact sorting logic and buyer-signal language.\nPrefer radius, niche, urgency, fit, timing, and spend metaphors.\nDrop occasional lead clues and disqualifier patterns.\nAvoid generic agency fluff and bloated prospecting jargon.\nKeep the bit alive across industries, cities, and lead lists.\nBe selective, practical, and fast even when the topic changes."
-      },
-      {
-        "id": "resume-surgeon",
-        "title": "Resume Surgeon",
-        "lang": "text",
-        "tags": ["Career", "Persona"],
-        "body": "You are {BOT_NAME}, a career-story surgeon with strong persona continuity.\nStay in a crisp, credibility-heavy, recruiter-aware voice.\nUse short edit logic and strength-framing language.\nPrefer signal, trim, headline, proof, stack, and positioning metaphors.\nDrop occasional hiring cues and résumé-screening patterns.\nAvoid generic career-coach fluff and fake confidence.\nKeep the bit alive across roles, pivots, and industries.\nBe polished, lean, and effective even when the topic changes."
-      },
-      {
-        "id": "tattoo-concept-composer",
-        "title": "Tattoo Concept Composer",
-        "lang": "text",
-        "tags": ["Art", "Persona"],
-        "body": "You are {BOT_NAME}, a symbolic tattoo concept crafter with strong persona continuity.\nStay in a vivid, artful, meaning-aware voice.\nUse concise visual logic and motif-building language.\nPrefer linework, negative space, emblem, shadow, texture, and myth metaphors.\nDrop occasional art-history cues and placement ideas.\nAvoid generic tattoo clichés and shallow symbolism.\nKeep the bit alive across styles, stories, and body placement.\nBe distinctive, tasteful, and sharp even when the topic changes."
-      },
-      {
-        "id": "airbnb-listing-reviver",
-        "title": "Airbnb Listing Reviver",
-        "lang": "text",
-        "tags": ["Hospitality", "Persona"],
-        "body": "You are {BOT_NAME}, a hospitality conversion tuner with strong persona continuity.\nStay in a clean, inviting, booking-minded voice.\nUse short sensory phrasing and trust-first logic.\nPrefer arrival, flow, comfort, standout, photo-sequence, and review metaphors.\nDrop occasional guest-behavior clues and booking friction hints.\nAvoid generic vacation fluff and overhyped adjectives.\nKeep the bit alive across listings, amenities, and rewrites.\nBe attractive, useful, and credible even when the topic changes."
-      },
-      {
-        "id": "podcast-clip-finder",
-        "title": "Podcast Clip Finder",
-        "lang": "text",
-        "tags": ["Content", "Persona"],
-        "body": "You are {BOT_NAME}, a clip-hunting content scout with strong persona continuity.\nStay in a quick, instinctive, retention-first voice.\nUse tight highlight logic and punchy selection language.\nPrefer spike, hook, turn, beat, payoff, and replay metaphors.\nDrop occasional audience cues and virality hints.\nAvoid generic creator sludge and padded summaries.\nKeep the bit alive across episodes, transcripts, and captions.\nBe sharp, selective, and magnetic even when the topic changes."
-      },
-      {
-        "id": "voice-of-customer-distiller",
-        "title": "Voice-of-Customer Distiller",
-        "lang": "text",
-        "tags": ["Marketing", "Persona"],
-        "body": "You are {BOT_NAME}, a market-language distiller with strong persona continuity.\nStay in a clear, buyer-brained, signal-heavy voice.\nUse concise synthesis logic and pattern-clustering language.\nPrefer phrase-bank, friction, desire, objection, resonance, and repeat metaphors.\nDrop occasional market clues and wording patterns.\nAvoid generic messaging fluff and invented customer language.\nKeep the bit alive across reviews, surveys, and transcripts.\nBe accurate, commercial, and sticky even when the topic changes."
-      },
-      {
-        "id": "pricing-angle-bot",
-        "title": "Pricing Angle Bot",
-        "lang": "text",
-        "tags": ["Business", "Persona"],
-        "body": "You are {BOT_NAME}, a pricing-psych angle builder with strong persona continuity.\nStay in a cool, commercial, numbers-aware voice.\nUse compact framing logic and margin-minded language.\nPrefer anchor, tier, spread, premium, floor, and pull metaphors.\nDrop occasional buyer-behavior cues and pricing heuristics.\nAvoid generic guru talk and fake certainty.\nKeep the bit alive across services, products, and packages.\nBe strategic, sellable, and grounded even when the topic changes."
-      },
-      {
-        "id": "script-to-caption-bot",
-        "title": "Script-to-Caption Bot",
-        "lang": "text",
-        "tags": ["Content", "Persona"],
-        "body": "You are {BOT_NAME}, a script compression gremlin with strong persona continuity.\nStay in a punchy, scroll-aware, rhythm-first voice.\nUse concise rewrite logic and platform-native language.\nPrefer hook, snap, caption, frame, CTA, and replay metaphors.\nDrop occasional retention cues and readability tricks.\nAvoid generic content fluff and recycled social phrasing.\nKeep the bit alive across reels, posts, and shorts.\nBe compact, catchy, and useful even when the topic changes."
-      },
-      {
-        "id": "partnership-pitch-bot",
-        "title": "Partnership Pitch Bot",
-        "lang": "text",
-        "tags": ["Business", "Persona"],
-        "body": "You are {BOT_NAME}, a joint-venture pitch mechanic with strong persona continuity.\nStay in a polished, mutually-beneficial, low-ego voice.\nUse short alliance logic and opportunity-framing language.\nPrefer fit, overlap, handoff, audience, upside, and lane metaphors.\nDrop occasional partnership cues and trust-building patterns.\nAvoid generic collab spam and desperate energy.\nKeep the bit alive across intros, proposals, and follow-ups.\nBe strategic, easy to say yes to, and steady even when the topic changes."
-      },
-      {
-        "id": "architecture-analysis",
-        "title": "Architecture Analysis",
-        "lang": "text",
-        "tags": ["ADVANCED"],
-        "body": "Analyze codebase structure and identify technical debt\nAudit this codebase: map dependency graph, flag tight coupling, identify service boundaries. Output: visual dependency map + migration roadmap with effort matrix + architectural debt score."
-      },
-      {
-        "id": "performance-optimization",
-        "title": "Performance Optimization",
-        "lang": "text",
-        "tags": ["PERFORMANCE"],
-        "body": "Identify and eliminate system bottlenecks\nProfile: identify O(n²) operations, memory leaks, unnecessary renders, database N+1 queries. Rank optimizations by impact/effort ratio. Output: flamegraph analysis + top 3 fixes with projected gains."
-      },
-      {
-        "id": "security-audit",
-        "title": "Security Audit:",
-        "lang": "text",
-        "tags": ["SECURITY"],
-        "body": "Comprehensive vulnerability assessment\nSecurity audit: scan for SQL injection, XSS, CSRF, auth bypass, data exposure, dependency vulnerabilities. Map to OWASP Top 10. Output: exploit scenarios + patches ranked by severity + prevention checklist."
-      },
-      {
-        "id": "test-coverage-builder",
-        "title": "Test Coverage Builder",
-        "lang": "text",
-        "tags": ["QUALITY"],
-        "body": "Generate comprehensive test suites\nGenerate test suite: unit tests (90%+ coverage), integration tests for critical paths, edge cases, mocks for external deps. Include: setup/teardown, fixtures, property-based tests, mutation testing validation."
-      },
-      {
-        "id": "api-design",
-        "title": "API Design",
-        "lang": "text",
-        "tags": ["ARCHITECTURE"],
-        "body": "REST and GraphQL specification development\nDesign API contract: RESTful naming, request/response schemas (JSON Schema), error taxonomy, rate limits, versioning strategy, OpenAPI 3.0 spec. Include: pagination patterns, filtering DSL, auth flows, webhook specs."
-      },
-      {
-        "id": "legacy-migration",
-        "title": "Legacy Migration",
-        "lang": "text",
-        "tags": ["MIGRATION"],
-        "body": "Modernize systems without downtime\nMigration plan: map legacy patterns → modern equivalents, preserve business logic, flag breaking changes, create gradual migration path. Output: side-by-side comparison + strangler fig strategy + rollback protocol."
-      },
-      {
-        "id": "database-schema",
-        "title": "Database Schema",
-        "lang": "text",
-        "tags": ["DATA"],
-        "body": "Design scalable database architecture\nSchema design: tables (3NF normalization), indexes for query patterns, foreign keys, constraints, materialized views. Output: ERD diagram + CREATE statements + query optimization guide + migration scripts + sharding strategy."
-      },
-      {
-        "id": "error-diagnosis",
-        "title": "Error Diagnosis",
-        "lang": "text",
-        "tags": ["DEBUG"],
-        "body": "Decode stack traces and system failures\nAnalyze stack trace: [TRACE]. Identify root cause, reproduce steps, related issues, environment factors. Reference common error patterns. Output: diagnosis + fix + prevention strategy + monitoring recommendation."
-      },
-      {
-        "id": "code-quality-metrics",
-        "title": "Code Quality Metrics",
-        "lang": "text",
-        "tags": ["ANALYSIS"],
-        "body": "Quantify technical debt objectively\nGenerate quality report: cyclomatic complexity, maintainability index, duplication %, test coverage, comment density, dependency count. Flag files exceeding thresholds. Output: refactor priority matrix + trend analysis + team benchmarks."
-      },
-      {
-        "id": "cicd-pipeline",
-        "title": "CI/CD Pipeline",
-        "lang": "text",
-        "tags": ["DEVOPS"],
-        "body": "Deploy with confidence and automation\nDesign CI/CD for [PROJECT]. Stages: build, test, security scan, deploy. Include: triggers (PR/merge), environments (dev/staging/prod), rollback strategy, blue-green deployment, notifications, smoke tests. Output: YAML config + runbook."
-      },
-      {
-        "id": "headine-lgenerator",
-        "title": "Headine lGenerator",
-        "lang": "text",
-        "tags": ["MARKETING"],
-        "body": "Create high-performing headlines\nCreate 10 headlines for [TOPIC]. Use: curiosity gap, specificity, emotional trigger, power words, contrarian angle. Formats: how-to, numbered list, question, challenge. Score each: clickability (0-10), SEO potential, shareability."
-      },
-      {
-        "id": "brand-voice-analysis",
-        "title": "Brand Voice Analysis",
-        "lang": "text",
-        "tags": ["BRANDING"],
-        "body": "Match and replicate writing styles\nAnalyze brand voice from [SAMPLES]. Extract: tone matrix, sentence rhythm, vocabulary tier, punctuation patterns, humor type, formality index. Then write [CONTENT] matching this voice precisely. Output: style guide + voice rules."
-      },
-      {
-        "id": "executive-summary",
-        "title": "Executive Summary",
-        "lang": "text",
-        "tags": ["BUSINESS"],
-        "body": "Distill documents for decision-makers\nSummarize for C-suite: situation, complication, resolution, action required. Max 300 words. Lead with: decision needed now. End with: recommended action + timeline + resource requirements + risk assessment."
-      },
-      {
-        "id": "seo-content",
-        "title": "SEO Content",
-        "lang": "text",
-        "tags": ["SEO"],
-        "body": "Optimize content for search ranking\nOptimize for [KEYWORD]. Add: semantic keywords, H1-H3 hierarchy, meta description (155 chars), alt text strategy, internal linking plan. Target: 1500+ words, 2-3% density, featured snippet structure, E-E-A-T signals."
-      },
-      {
-        "id": "email-campaign",
-        "title": "Email Campaign",
-        "lang": "text",
-        "tags": ["SALES"],
-        "body": "Design conversion-focused sequences\nDesign 5-email sequence for [PRODUCT]. Email 1: problem awareness, Email 2: solution education, Email 3: social proof, Email 4: urgency creation, Email 5: last-chance offer. Include: subject lines (A/B variants), preview text, CTAs, send timing."
-      },
-      {
-        "id": "concept-explanation",
-        "title": "Concept Explanation",
-        "lang": "text",
-        "tags": ["EDUCATION"],
-        "body": "Simplify complex topics effectively\nExplain [CONCEPT] at 3 levels: 5th grader (analogy-based), undergrad (technical intro), expert (full depth). Use: concrete examples, visual descriptions, build concepts progressively. End with: key insight + common misconceptions."
-      },
-      {
-        "id": "speech-writing",
-        "title": "Speech Writing",
-        "lang": "text",
-        "tags": ["SPEAKING"],
-        "body": "Craft persuasive presentations\nWrite [TIME]-min speech on [TOPIC]. Structure: hook (story/question), context, 3 main points (rule of 3), call-to-action. Use: repetition, rhetorical devices, cadence shifts. Include: [PAUSE] markers, emphasis cues, timing notes."
-      },
-      {
-        "id": "research-synthesis",
-        "title": "Research Synthesis",
-        "lang": "text",
-        "tags": ["ACADEMIC"],
-        "body": "Consolidate academic sources\nSynthesize research: [SOURCES]. Extract: methodology comparison, conflicting findings, consensus points, research gaps, emerging patterns. Output: literature review + citation-ready summaries + future research directions + practical implications."
-      },
-      {
-        "id": "product-positioning",
-        "title": "Product Positioning",
-        "lang": "text",
-        "tags": ["STRATEGY"],
-        "body": "Define market differentiation strategy\nPosition [PRODUCT] in market. Define: target customer, problem solved, unique value prop, competitive advantages, category creation. Output: positioning statement + messaging framework + key differentiators + proof points."
-      },
-      {
-        "id": "press-release",
-        "title": "Press Release",
-        "lang": "text",
-        "tags": ["PR"],
-        "body": "Announce newsworthy developments\nWrite press release for [ANNOUNCEMENT]. Structure: headline, dateline, lead paragraph (who/what/when/where/why), supporting details, quotes, boilerplate. Target: 400-600 words, AP style, newsworthy angle, journalist-friendly format."
-      },
-      {
-        "id": "trend-forecasting",
-        "title": "Trend Forecasting",
-        "lang": "text",
-        "tags": ["PREDICTIVE"],
-        "body": "Predict patterns from time-series data\nAnalyze timeseries: [DATA]. Identify: patterns, anomalies, seasonality, correlation coefficients. Project: 3/6/12 month forecasts with confidence intervals. Output: trend visualization + key drivers + risk factors + scenario modeling."
-      },
-      {
-        "id": "ab-test-analysis",
-        "title": "A/B Test Analysis",
-        "lang": "text",
-        "tags": ["EXPERIMENTATION"],
-        "body": "Interpret experiment results statistically\nAnalyze test: [METRICS]. Calculate: statistical significance (p < 0.05), confidence intervals, effect size, sample size adequacy, statistical power. Decision: ship/iterate/kill. Consider: segment performance, external validity, practical significance."
-      },
-      {
-        "id": "customer-journey-map",
-        "title": "Customer Journey Map",
-        "lang": "text",
-        "tags": ["UX"],
-        "body": "Visualize user experience touchpoints\nMap journey for [PRODUCT]. Stages: awareness, consideration, purchase, retention, advocacy. Per stage: touchpoints, emotions, pain points, opportunities, metrics. Output: journey map + friction analysis + optimization priorities + quick wins."
-      },
-      {
-        "id": "financial-modeling",
-        "title": "Financial Modeling",
-        "lang": "text",
-        "tags": ["FINANCE"],
-        "body": "Build investor-grade projections\nBuild 3-year model: revenue streams, COGS, opex, cash flow, break-even. Scenarios: conservative/base/aggressive. Output: P&L statement + assumptions doc + key metrics (CAC, LTV, burn rate, runway, unit economics) + sensitivity analysis."
-      },
-      {
-        "id": "root-cause-analysis",
-        "title": "Root Cause Analysis",
-        "lang": "text",
-        "tags": ["PROBLEM-SOLVING"],
-        "body": "Identify underlying system failures\nRoot cause for [ISSUE]. Method: 5 Whys + fishbone diagram. Categories: people, process, technology, environment. Output: causal chain, contributing factors, corrective actions, preventive measures, monitoring plan."
-      },
-      {
-        "id": "risk-assessment",
-        "title": "Risk Assessment",
-        "lang": "text",
-        "tags": ["RISK"],
-        "body": "Quantify project uncertainties\nRisk matrix for [PROJECT]. Each risk: probability (1-5), impact (1-5), mitigation strategy, contingency plan, owner. Plot 5x5 matrix. Prioritize: high probability + high impact. Output: risk register + action plan + escalation triggers."
-      },
-      {
-        "id": "competitive-analysis",
-        "title": "Competitive Analysis",
-        "lang": "text",
-        "tags": ["STRATEGY"],
-        "body": "Benchmark against market leaders\nAnalyze competitors: [COMPANIES]. Compare: features, pricing tiers, positioning statements, market share, strengths/weaknesses. Use: SWOT analysis, perceptual mapping. Output: competitive matrix + differentiation opportunities + threat assessment."
-      },
-      {
-        "id": "data-cleaning",
-        "title": "Data Cleaning",
-        "lang": "text",
-        "tags": ["DATA SCIENCE"],
-        "body": "Transform raw data for analysis\nClean dataset: [DATA]. Handle: missing values (imputation strategies), outliers (z-score/IQR method), duplicates, format inconsistencies, encoding errors. Document: decisions made, data quality score (before/after), cleaning script."
-      },
-      {
-        "id": "dashboard-design",
-        "title": "Dashboard Design",
-        "lang": "text",
-        "tags": ["BI"],
-        "body": "Create actionable metric visualizations\nDesign dashboard for [ROLE]. Include: KPIs (leading/lagging indicators), visualization types (justified), filters, drill-down paths. Layout: F-pattern, critical metric top-left. Output: wireframe + metric definitions + refresh strategy."
-      },
-      {
-        "id": "bicohort-analysis",
-        "title": "BICohort Analysis",
-        "lang": "text",
-        "tags": ["ANALYTICS"],
-        "body": "Track user behavior over time\nCohort analysis on [USERS]. Group by: acquisition date, channel, behavior pattern. Metrics: retention curves, revenue per cohort, engagement trends. Time: weekly/monthly. Output: cohort table + retention analysis + actionable insights on improving stickiness."
-      },
-      {
-        "id": "college-student-research-skills",
-        "title": "College Student — Research Skills",
-        "lang": "text",
-        "tags": ["EDUCATION"],
-        "body": "Academic research methodology training:\nCreate comprehensive research training for [TOPIC]. Start: literature review methods, database navigation, citation management. Progress: critical analysis, methodology evaluation, synthesis techniques. End: thesis development, academic writing. Output: step-by-step curriculum + exercises + evaluation rubric."
-      },
-      {
-        "id": "real-estate-agent-market-analysis",
-        "title": "Real Estate Agent — Market Analysis",
-        "lang": "text",
-        "tags": ["REAL ESTATE"],
-        "body": "Property valuation and competitive analysis:\nAnalyze property market for [LOCATION]. Include: comparable sales (last 6 months), price per sq ft trends, days on market, inventory levels, demographic shifts. Output: valuation range + market positioning strategy + pricing recommendations + buyer/seller talking points."
-      },
-      {
-        "id": "sales-professional-objection-handling",
-        "title": "Sales Professional — Objection Handling",
-        "lang": "text",
-        "tags": ["SALES"],
-        "body": "Navigate common buyer resistance:\nCreate objection handling framework for [PRODUCT]. Map: 10 common objections, root concerns, response strategies, proof points, closing techniques. Include: timing cues, tone guidance, follow-up sequences. Output: response scripts + role-play scenarios + success metrics."
-      },
-      {
-        "id": "marketing-manager-campaign-planning",
-        "title": "Marketing Manager — Campaign Planning",
-        "lang": "text",
-        "tags": ["MARKETING"],
-        "body": "Multi-channel campaign strategy:\nPlan campaign for [PRODUCT LAUNCH]. Define: objectives (SMART), target audience, channel mix, budget allocation, creative strategy, timeline. Include: KPIs per channel, attribution model, A/B test plan. Output: campaign brief + Gantt chart + measurement framework."
-      },
-      {
-        "id": "product-manager-feature-prioritization",
-        "title": "Product Manager — Feature Prioritization",
-        "lang": "text",
-        "tags": ["PRODUCT"],
-        "body": "Data-driven roadmap development:\nPrioritize features for [PRODUCT]. Evaluate: user impact, business value, technical complexity, strategic alignment. Use: RICE scoring, opportunity cost analysis, dependency mapping. Output: prioritized backlog + rationale doc + stakeholder communication plan."
-      },
-      {
-        "id": "financial-analyst-investment-thesis",
-        "title": "Financial Analyst — Investment Thesis",
-        "lang": "text",
-        "tags": ["FINANCE"],
-        "body": "Build comprehensive investment cases:\nDevelop investment thesis for [COMPANY]. Analyze: business model, competitive moat, financial health, growth drivers, risks. Include: DCF valuation, comparable analysis, sensitivity scenarios. Output: investment memo + valuation model + recommendation (buy/hold/sell)."
-      },
-      {
-        "id": "hr-professional-interview-framework",
-        "title": "HR Professional — Interview Framework",
-        "lang": "text",
-        "tags": ["HR"],
-        "body": "Structured candidate evaluation:\nDesign interview process for [ROLE]. Create: competency matrix, behavioral questions, technical assessments, scoring rubric, decision criteria. Include: interviewer training guide, bias mitigation strategies, candidate experience optimization. Output: complete interview kit."
-      },
-      {
-        "id": "deck-prompt-1",
-        "title": "Launch-Ready Pitch Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "strict alignment"],
-        "body": `Build a launch-ready pitch deck for [BRAND / PRODUCT / OFFER] that looks like a real high-budget design team made it, not an AI toy. Make it ruthless, elegant, and centered. Every slide must use a strict alignment system, perfect safe margins, zero overlapping objects, zero orphaned elements, and one dominant focal point per slide. No generic gradients, no startup clichés, no stock-photo energy, no fluffy icons, no fake dashboard clutter. Use sharp typography, controlled negative space, disciplined image crops, and cinematic pacing translated into static slides. The deck must feel expensive, modern, fast, and emotionally rewarding to look at. Build for investors / buyers / executive stakeholders. Slides should compress information instead of bloating it. Every layout must feel balanced, intentional, and dead-center clean.`
-      },
-      {
-        "id": "deck-prompt-2",
-        "title": "Black-Tie Brutalist Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "brutalist", "luxury"],
-        "body": `Design a wickedly professional investor deck for [COMPANY] in a black-tie brutalist luxury style. Make it feel like private equity meets avant-garde product launch. Absolute rules: centered composition, no collisions, no overlapping text boxes, no lazy auto-layout chaos, no cornball AI visuals. Use a rigid grid, hard hierarchy, bold typography, narrow copy, oversized statement frames, and immaculate whitespace. Every slide must read in under 3 seconds while still feeling premium and high-taste. The result should hit like a controlled dopamine spike: smooth, undeniable, and surgically composed.`
-      },
-      {
-        "id": "deck-prompt-3",
-        "title": "Site of the Day PowerPoint",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "cinematic", "minimal"],
-        "body": `Create a pitch deck for [TOPIC] that feels like a Site of the Day digital product experience translated into PowerPoint without becoming gimmicky. Prioritize structure, rhythm, and visual authority. Every object must sit cleanly on-grid, centered, and fully separated from every other element. No overlap. No floating nonsense. No decorative filler. Use typography, geometry, and motion-inspired sequencing to create the sensation of momentum. The deck should feel like a premium launch system: sharp, cinematic, minimal, and mature.`
-      },
-      {
-        "id": "deck-prompt-4",
-        "title": "Boardroom-Grade Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "boardroom", "clarity"],
-        "body": `Build a boardroom-grade deck for [PRODUCT / COMPANY] that feels lethal in its clarity. Make every slide centered, balanced, and impossible to misread. No AI-looking layouts. No generic slideware. No weak spacing. No clutter. Use one core visual system across the deck: restrained palette, exact typographic hierarchy, intentional image framing, and clean modular proof blocks. The deck must look like it belongs in front of high-stakes buyers who notice sloppy craft immediately.`
-      },
-      {
-        "id": "deck-prompt-5",
-        "title": "Founder Pitch Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "startup", "founder"],
-        "body": `Design a founder pitch deck for [STARTUP] that is aggressive, clean, and elite. The deck should feel like a premium product launch crossed with a top-tier creative agency treatment. Every slide must remain perfectly centered, grid-locked, and collision-free. Use large headlines, tight supporting copy, bold proof moments, and striking but disciplined visual rhythm. Reject anything that looks like templates, Canva fluff, AI sludge, or fake futurism. Make it hard, clear, and gorgeous.`
-      },
-      {
-        "id": "deck-prompt-6",
-        "title": "Editorial Discipline Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "editorial", "precision"],
-        "body": `Build a pitch deck for [INDUSTRY / OFFER] with immaculate editorial discipline. Think fashion magazine precision fused with enterprise clarity. Every slide must be centered and mathematically composed. No overlap, no drift, no unbalanced margins, no random color noise. Use sharp type, hard crops, sparse but powerful visual fields, and premium spacing. The deck should feel expensive because it is controlled, not because it is loud.`
-      },
-      {
-        "id": "deck-prompt-7",
-        "title": "High-Conviction Sales Deck",
-        "lang": "text",
-        "tags": ["sales deck", "presentation", "high-conviction"],
-        "body": `Create a high-conviction sales deck for [SERVICE / PRODUCT] that makes the audience feel they are looking at a finished market leader, not a work in progress. Use a strict centered layout engine and build every slide so that all text, charts, visuals, and labels remain fully separated, aligned, and readable. No overlapping layers. No overdesigned infographic mess. No buzzword soup. The entire deck must compress complexity into brutal elegance.`
-      },
-      {
-        "id": "deck-prompt-8",
-        "title": "Cinematic Dark-Mode Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "dark-mode", "cinematic"],
-        "body": `Build a cinematic dark-mode pitch deck for [BRAND] that feels smooth, expensive, and technically disciplined. Use black or near-black foundations, one controlled accent color, and typography that carries authority without screaming. Everything must remain centered, non-overlapping, and properly spaced. Simulate motion through layout progression, not cheesy effects. Make every slide feel like a frame from a premium launch film.`
-      },
-      {
-        "id": "deck-prompt-9",
-        "title": "White-Space-Dominant Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "white-space", "elite"],
-        "body": `Design a white-space-dominant pitch deck for [COMPANY / PRODUCT] that feels calm, dangerous, and elite. Use off-white backgrounds, black typography, precise spacing, and centered composition. No fake AI gradients, no glassmorphism junk, no floating widgets, no overlapping objects. Every slide should look effortless but clearly be engineered by someone obsessive about balance and hierarchy.`
-      },
-      {
-        "id": "deck-prompt-10",
-        "title": "Luxury Consulting Investor Deck",
-        "lang": "text",
-        "tags": ["investor deck", "presentation", "luxury", "data storytelling"],
-        "body": `Create an investor deck for [TOPIC] with the emotional reward signal of a luxury website and the decision clarity of a world-class consulting deck. Every slide must follow strict non-overlap rules, perfectly centered focal logic, equalized margins, and coherent visual rhythm. Use bold thesis slides, ruthless proof slides, and controlled data storytelling. It should impress by compression, not decoration.`
-      },
-      {
-        "id": "deck-prompt-11",
-        "title": "Product Launch Deck",
-        "lang": "text",
-        "tags": ["product launch", "presentation", "restraint"],
-        "body": `Build a product launch deck for [PRODUCT] that feels like Apple-level restraint fused with sharper underground edge. Every slide must be centered, balanced, and surgically non-overlapping. Use one dominant visual idea per slide. Kill all filler. No stock mockups unless they look real. No generic 3D nonsense. No bloated copy. Make it feel tactile, fast, and impossible to ignore.`
-      },
-      {
-        "id": "deck-prompt-12",
-        "title": "Modern Firm Agency Deck",
-        "lang": "text",
-        "tags": ["agency deck", "presentation", "consulting", "modern firm"],
-        "body": `Design a deck for [AGENCY / STUDIO / CONSULTING OFFER] that looks like a serious modern firm with taste, not a freelancer template. Use perfect vertical rhythm, centered alignment, disciplined safe zones, and no object overlap anywhere. Build in swagger through typography and pacing, not through cheesy effects. The deck should feel rich, dangerous, and fully in control.`
-      },
-      {
-        "id": "deck-prompt-13",
-        "title": "Venture-Scale Startup Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "venture-scale", "startup"],
-        "body": `Create a venture-scale pitch deck for [STARTUP] that feels compressed, predatory, and polished. Use a hard grid. Center everything with intent. Maintain exact spacing consistency across all slides. Never allow copy boxes, labels, charts, or images to touch or collide. Remove all traces of AI-generated softness. Replace it with sharp hierarchy, visual confidence, and premium restraint.`
-      },
-      {
-        "id": "deck-prompt-14",
-        "title": "Technical Platform SaaS Deck",
-        "lang": "text",
-        "tags": ["technical deck", "presentation", "saas", "b2b"],
-        "body": `Build a technical pitch deck for [B2B / SaaS / PLATFORM] that makes complex ideas feel clean and inevitable. Every slide must remain centered and collision-free. Any charts or diagrams must be simplified to their strongest signal. No dashboard vomit. No visual noise. Use bold thesis statements, modular proof frames, controlled technical diagrams, and executive-grade spacing. Make it feel like advanced systems thinking with elite design judgment.`
-      },
-      {
-        "id": "deck-prompt-15",
-        "title": "High-Taste Culture Brand Deck",
-        "lang": "text",
-        "tags": ["luxury deck", "presentation", "creative", "high-taste"],
-        "body": `Design a high-taste deck for [LUXURY / CREATIVE / CULTURE BRAND] that feels like an Awwwards-caliber experience correctly translated into presentation form. Use centered composition, rigid safe margins, strong image discipline, and total non-overlap. Typography should be sharp and seductive but still readable. Every slide should feel like a poster and a sales tool at once.`
-      },
-      {
-        "id": "deck-prompt-16",
-        "title": "Engineered Strict Layout Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "strict layout", "engineered"],
-        "body": `Create a deck for [PRODUCT / OFFER] that punishes weak layout. Center all major elements. Use a strict baseline grid. Lock every slide to balanced margins and exact spacing intervals. No overlapping text. No stacked chaos. No lazy icon rows. No visual filler. Build a deck that feels engineered, not decorated. The viewer should feel immediate trust because nothing is sloppy.`
-      },
-      {
-        "id": "deck-prompt-17",
-        "title": "Stealth-Wealth Modernist Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "stealth-wealth", "modernist"],
-        "body": `Build a pitch deck for [COMPANY] in a stealth-wealth modernist style. Understated, premium, and lethal. Use restrained color, exact typography, centered hierarchy, and flawless object separation. No noisy backgrounds. No juvenile effects. No corny “innovation” visuals. The deck should feel like expensive taste backed by hard competence.`
-      },
-      {
-        "id": "deck-prompt-18",
-        "title": "Elite Keynote Stage Presentation",
-        "lang": "text",
-        "tags": ["keynote", "presentation", "elite deck", "luxury"],
-        "body": `Design an elite keynote-style deck for [TOPIC] that feels like a stage presentation designed by a luxury digital product team. Every slide must be centered, clean, and non-overlapping, with one undeniable read from distance. Use giant headlines, controlled subcopy, and visual transitions expressed through sequencing instead of gimmicks. Make the deck feel buttery, sharp, and fully composed.`
-      },
-      {
-        "id": "deck-prompt-19",
-        "title": "Template-Drift-Free Deck System",
-        "lang": "text",
-        "tags": ["pitch deck system", "presentation", "custom"],
-        "body": `Create a pitch deck system for [BRAND / PRODUCT / OFFER] with no template drift. All slides must feel like they came from one exact design mind. Use one grid system, one spacing logic, one type hierarchy, one image philosophy, and one motion-inspired pacing model. Every layout must stay centered and every object must remain fully separated and readable. The result should feel custom, brutal, and expensive.`
-      },
-      {
-        "id": "deck-prompt-20",
-        "title": "Meanest Clean Pitch Deck",
-        "lang": "text",
-        "tags": ["pitch deck", "presentation", "clean"],
-        "body": `Build the meanest clean pitch deck possible for [TOPIC]. Make it professional enough for serious money and edgy enough to wake up jaded eyes. Enforce centered layouts, strict balance, non-overlapping content, perfect spacing, and immaculate hierarchy on every single slide. No AI sheen. No fake futurist garbage. No soft startup fluff. Use crisp typography, controlled contrast, sparse but powerful imagery, and slide sequencing that hits like a reward loop.`
-      },
-      {
-        "id": "deck-prompt-addon",
-        "title": "Add-On: Hard Rules for Slides",
-        "lang": "text",
-        "tags": ["constraints", "rules", "slides", "presentation"],
-        "body": `Hard rules: every slide must be centered, grid-aligned, safe-margin clean, fully non-overlapping, presentation-export ready, mobile-legible in screenshot form, and visually consistent with a premium professional deck built by humans with taste.`
-      }
-    ];
-
-    const $ = (s) => document.querySelector(s);
-
-    function fallbackCopy(text) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.top = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-    }
-
-    async function copyText(text) {
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          fallbackCopy(text);
+            /* Grid Configuration */
+            --grid-gap: 24px;
+            --card-min-width: 340px;
         }
-      } catch {
-        fallbackCopy(text);
-      }
-    }
 
-    function padPct(n){
-      const s = String(n);
-      return s.length === 1 ? `0${s}` : s;
-    }
+        /* ==========================================================================
+           BASE STYLES & ACCESSIBILITY RESETS
+           ========================================================================== */
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
 
-    function updateScrollPct(){
-      const el = $("#scrollPct");
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      const pct = max <= 0 ? 0 : Math.round((window.scrollY / max) * 100);
-      el.textContent = `${padPct(Math.max(0, Math.min(100, pct)))}%`;
-    }
+        html {
+            background-color: var(--bg-base);
+            color: var(--text-on-bone);
+            font-family: var(--font-aeonik);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+        }
 
-    function normalize(s){ return (s || "").toLowerCase().trim(); }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    let activeTag = "All";
+        /* Standardized Focus Rings for Accessibility Compliance */
+        *:focus-visible {
+            outline: 2px solid var(--text-on-bone);
+            outline-offset: 2px;
+        }
 
-    function getQueryState(){
-      const u = new URL(window.location.href);
-      return {
-        q: u.searchParams.get("q") || "",
-        tag: u.searchParams.get("tag") || "All",
-      };
-    }
+        /* Enforced Touch Native Feel - Selectable boundaries */
+        a, button, .vitamin-btn, #mobile-nav-toggle, .grid-card, .f-belt a, .f-util {
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-    function setQueryState({ q, tag }){
-      const u = new URL(window.location.href);
-      if (q) u.searchParams.set("q", q); else u.searchParams.delete("q");
-      if (tag && tag !== "All") u.searchParams.set("tag", tag); else u.searchParams.delete("tag");
+        /* ==========================================================================
+           STATIC SPATIAL FX
+           ========================================================================== */
+        .spatial-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: none;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           GLOBAL HEADER (SLIM OS BAR)
+           ========================================================================== */
+        .global-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 90;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: none;
+            padding: 0;
+            display: flex;
+            align-items: flex-start;
+            pointer-events: none; 
+        }
+
+        .brand-logo {
+            pointer-events: auto; 
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: max(24px, env(safe-area-inset-top)) 0 0 max(24px, env(safe-area-inset-left));
+        }
+        
+        .brand-logo img {
+            height: 64px; 
+            width: auto;
+            display: block;
+            mix-blend-mode: multiply;
+            transition: opacity 0.2s ease;
+        }
+        
+        .brand-logo:hover img {
+            opacity: 0.7;
+        }
+
+        @media (min-width: 1024px) {
+            .global-header {
+                padding: 0;
+            }
+            .brand-logo {
+                padding: max(24px, env(safe-area-inset-top)) 0 0 max(32px, env(safe-area-inset-left));
+            }
+            .brand-logo img {
+                height: 96px; 
+            }
+        }
+
+        /* ==========================================================================
+           MAIN SITE NAV PILL OVERLAY
+           ========================================================================== */
+        .nav-pill {
+            position: fixed;
+            top: max(24px, env(safe-area-inset-top));
+            right: max(24px, env(safe-area-inset-right));
+            transform: translate3d(0, -20px, 0);
+            opacity: 0;
+            background: rgba(227, 223, 213, 0.95);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px;
+            z-index: 101; 
+            box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.5);
+            transition: transform 0.6s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo), border-radius 0.6s var(--ease-premium), width 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
+        }
+        .nav-pill::-webkit-scrollbar { display: none; }
+        .nav-pill.is-loaded { transform: translate3d(0, 0, 0); opacity: 1; }
+        .nav-pill.hidden { transform: translate3d(0, -120%, 0); opacity: 0; pointer-events: none; }
+
+        .nav-pill a.route-btn {
+            color: var(--text-on-bone);
+            text-decoration: none;
+            font-size: 11px;
+            font-family: var(--font-aeonik);
+            font-weight: 700;
+            font-style: normal;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-out-expo);
+            position: relative;
+            min-height: 44px; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-pill a.route-btn::after {
+            content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; z-index: -1;
+        }
+        .nav-pill a.route-btn:focus-visible, .nav-pill a.route-btn:active {
+            background: var(--color-plasma); color: var(--color-charcoal);
+            box-shadow: 0 0 20px rgba(204, 255, 0, 0.3); outline: none;
+        }
+        @media (hover: hover) {
+            .nav-pill a.route-btn:hover {
+                background: var(--color-plasma); color: var(--color-charcoal);
+                box-shadow: 0 0 20px rgba(204, 255, 0, 0.3); outline: none; transform: scale(1.02);
+            }
+        }
+
+        /* Nav Desktop */
+        @media (min-width: 800px) {
+            .nav-pill {
+                max-width: calc(100vw - 240px); 
+                flex-wrap: wrap; 
+                justify-content: flex-end; 
+                overflow: hidden; 
+                border-radius: 24px; 
+                padding: 6px 12px;
+            }
+            .nav-pill a.route-btn {
+                flex: 0 0 auto;
+                padding: 8px 12px;
+                font-size: 9.5px; 
+                letter-spacing: 0.08em;
+                min-height: unset;
+                margin: 2px; 
+            }
+            #mobile-nav-toggle { display: none; }
+            .nav-items-wrapper { display: contents; }
+            .nav-items-inner { display: contents; }
+        }
+
+        /* Nav Mobile */
+        @media (max-width: 799px) {
+            .nav-pill {
+                right: max(24px, env(safe-area-inset-right));
+                left: auto;
+                transform: translate3d(0, -20px, 0);
+                flex-direction: column;
+                background: var(--color-bone);
+                min-width: auto;
+                padding: 4px;
+                border-radius: 32px;
+                box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.2);
+                width: auto;
+                max-width: calc(100vw - 120px); 
+                align-items: flex-end; 
+            }
+            .nav-pill.is-loaded { transform: translate3d(0, 0, 0); opacity: 1; }
+            .nav-pill.hidden { transform: translate3d(0, -120%, 0); opacity: 0; }
+            
+            .nav-pill.is-open {
+                width: 220px; 
+                border-radius: 20px;
+                box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+            }
+
+            #mobile-nav-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: auto;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%), var(--color-bone);
+                color: var(--text-on-bone);
+                padding: 8px 24px;
+                border-radius: 32px;
+                font-family: var(--font-aeonik);
+                font-weight: 800;
+                font-size: 13px;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                min-height: 44px; 
+                border: 1px solid var(--border-base); 
+                box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 4px 12px -2px rgba(0, 0, 0, 0.15);
+                cursor: pointer;
+                transition: all 0.4s var(--ease-premium);
+            }
+            .nav-pill.is-open #mobile-nav-toggle {
+                width: 100%; 
+                background: rgba(0, 0, 0, 0.03);
+                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+                border-color: rgba(0, 0, 0, 0.05);
+                margin-bottom: 8px;
+            }
+
+            #mobile-nav-toggle .toggle-text-close { display: none; }
+            .nav-pill.is-open #mobile-nav-toggle .toggle-text-start { display: none; }
+            .nav-pill.is-open #mobile-nav-toggle .toggle-text-close { display: block; }
+            
+            .nav-items-wrapper {
+                display: grid;
+                grid-template-rows: 0fr;
+                transition: grid-template-rows 0.6s var(--ease-premium);
+                width: 100%;
+            }
+            .nav-pill.is-open .nav-items-wrapper {
+                grid-template-rows: 1fr;
+            }
+            
+            .nav-items-inner {
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 0 4px;
+            }
+            .nav-pill.is-open .nav-items-inner {
+                padding-bottom: 8px;
+                max-height: 60vh;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+            
+            .nav-pill a.route-btn {
+                width: 100%;
+                padding: 16px 20px;
+                margin: 0;
+                text-align: center;
+                border-radius: 12px;
+                font-size: 13px;
+            }
+        }
+
+        /* ==========================================================================
+           LAYOUT & GRID ALIGNMENT
+           ========================================================================== */
+        .main-container {
+            padding: max(100px, env(safe-area-inset-top)) var(--space-4) var(--space-16);
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                padding: 140px var(--space-8) var(--space-16);
+            }
+        }
+
+        .category-block {
+            margin-bottom: var(--space-16);
+            scroll-margin-top: 100px; 
+        }
+
+        .category-header {
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            width: 100%;
+        }
+
+        .category-header::after { 
+            content: ''; 
+            flex-grow: 1; 
+            height: 1px; 
+            background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 100%); 
+        }
+
+        .section-badge {
+            position: relative; display: inline-flex; align-items: center; gap: 12px;
+            padding: 10px 24px 10px 18px; font-size: 11px; font-weight: 800;
+            font-family: var(--font-aeonik);
+            letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-on-bone); z-index: 1; border-radius: 4px;
+        }
+
+        .section-badge::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-base); transform: skewX(-12deg); z-index: -1; border-radius: 3px;
+            box-shadow: 0 8px 20px -4px rgba(0,0,0,0.1); border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes magenta-pulse { 
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 0, 85, 0.5), 0 0 20px rgba(255, 0, 85, 0.3); opacity: 1; } 
+            50% { box-shadow: 0 0 16px rgba(255, 0, 85, 0.7), 0 0 28px rgba(255, 0, 85, 0.5); opacity: 0.7; } 
+        }
+
+        @keyframes plasma-pulse { 
+            0%, 100% { box-shadow: 0 0 12px rgba(204, 255, 0, 0.5), 0 0 20px rgba(204, 255, 0, 0.3); opacity: 1; } 
+            50% { box-shadow: 0 0 16px rgba(204, 255, 0, 0.7), 0 0 28px rgba(204, 255, 0, 0.5); opacity: 0.7; } 
+        }
+        
+        .section-badge::after {
+            content: ''; width: 6px; height: 6px; background: var(--color-magenta); border-radius: 50%;
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.5), 0 0 20px rgba(255, 0, 85, 0.3); order: -1; animation: magenta-pulse 3s infinite ease-in-out;
+        }
+
+        .module-count {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted-on-bone);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .strict-grid {
+            display: grid;
+            /* Constraint to prevent mobile viewport overflow */
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min-width)), 1fr));
+            gap: var(--grid-gap);
+            align-items: stretch;
+        }
+
+        /* ==========================================================================
+           PREVIEW CARDS (FAST & ACCESSIBLE)
+           ========================================================================== */
+        .grid-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            height: 380px; 
+            position: relative;
+        }
+
+        .grid-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        .grid-card:focus-visible {
+            outline: 3px solid var(--text-on-bone);
+            outline-offset: 4px;
+            z-index: 3;
+        }
+
+        .card-meta {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+
+        .url-text {
+            font-family: var(--font-aeonik);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted-on-charcoal);
+            word-break: break-all;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .state-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--dot-glow);
+            box-shadow: 0 0 12px rgba(204, 255, 0, 0.5), 0 0 20px rgba(204, 255, 0, 0.3);
+            flex-shrink: 0;
+            margin-top: 4px;
+            animation: plasma-pulse 3s infinite ease-in-out;
+        }
+
+        .preview-window {
+            flex-grow: 1;
+            position: relative;
+            background: var(--canvas-inner);
+            overflow: hidden;
+        }
+
+        .loader-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader-text {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-on-charcoal);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: var(--bg-card);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-card);
+        }
+
+        .live-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border: none;
+            pointer-events: none; 
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 2;
+            background: #ffffff;
+        }
+
+        .live-iframe.is-loaded {
+            opacity: 1;
+        }
+
+        .preview-window:has(.live-iframe.is-loaded) .loader-pattern {
+            opacity: 0;
+        }
+
+        .card-action {
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-card);
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .action-label {
+            font-family: var(--font-label);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-on-charcoal);
+        }
+
+        .action-arrow {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: var(--check-glow);
+            stroke-width: 2;
+            filter: drop-shadow(0 0 4px rgba(227, 223, 213, 0.4));
+            transition: stroke 0.2s ease, transform 0.2s ease;
+        }
+
+        .grid-card:hover .action-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ==========================================================================
+           BNDR FOOTER
+           ========================================================================== */
+        #bndr-base-footer {
+            background: var(--void);
+            color: var(--bone);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-family: 'Inter', var(--font-aeonik), sans-serif;
+            position: relative;
+            z-index: 9998;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: auto;
+        }
+
+        .f-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            height: var(--f-h);
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1.2fr 3.2fr 1.6fr 1fr;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .f-axis-legal { display: flex; flex-direction: column; gap: 2px; }
+        .f-row { display: flex; gap: 12px; }
+        .f-axis-legal a { 
+            font-size: 9px; font-weight: 700; color: var(--bone); 
+            text-decoration: none; opacity: 0.5; transition: 0.2s var(--f-ease);
+            padding: 12px; /* Expanding touch box */
+            margin: -12px; 
+        }
+        .f-axis-legal a:hover { opacity: 1; color: var(--plasma); }
+
+        .f-belt { display: flex; gap: 16px; justify-content: center; }
+        .f-belt a {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; 
+            transition: transform 0.2s var(--f-ease);
+        }
+        .f-belt svg { width: 16px; height: 16px; transition: 0.3s; opacity: 0.85; }
+        
+        .f-belt a:hover { transform: translateY(-2px); }
+        .f-belt a:hover svg { opacity: 1; filter: url(#fizzle-physics); }
+        
+        .f-belt .li svg { fill: var(--c-li); }
+        .f-belt .ss svg { fill: var(--c-ss); }
+        .f-belt .gh svg { fill: var(--c-gh); }
+        .f-belt .ig svg { fill: var(--c-ig); }
+        .f-belt .fb svg { fill: var(--c-fb); }
+        .f-belt .bc svg { fill: var(--c-bc); }
+        .f-belt .gr svg { fill: var(--c-gr); }
+        .f-belt .pb svg { fill: var(--c-pb); }
+
+        .f-actions { display: flex; gap: 12px; justify-content: flex-end; }
+        .f-util {
+            font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+            text-decoration: none; color: var(--bone);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px; border-radius: 4px;
+            transition: 0.2s; cursor: pointer; background: transparent;
+            white-space: nowrap; text-transform: uppercase;
+        }
+        .f-util:hover, .f-util:active { background: var(--bone); color: var(--void); }
+
+        .f-meta { text-align: right; }
+        .f-time { font-family: monospace; font-size: 10px; font-weight: 700; color: var(--bone); margin-bottom: 2px; }
+        .f-copy { font-size: 8px; font-weight: 600; opacity: 0.3; text-transform: uppercase; }
+
+        @media (max-width: 1100px) {
+            #bndr-base-footer { height: auto; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+            .f-layout { 
+                grid-template-columns: 1fr; height: auto; 
+                padding: 20px 16px; gap: 20px; 
+            }
+            .f-belt { flex-wrap: wrap; gap: 16px; order: 1; justify-content: space-evenly; }
+            .f-belt a { width: 44px; height: 44px; } 
+            .f-belt svg { width: 24px; height: 24px; }
+            
+            .f-axis-legal { order: 2; align-items: center; text-align: center; gap: 4px; }
+            .f-actions { order: 3; justify-content: center; gap: 12px; }
+            .f-util { padding: 14px 20px; font-size: 11px; } 
+            
+            .f-meta { order: 4; text-align: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        }
+
+        /* ==========================================================================
+           DONATE / SUPPORT BUTTONS (3D OVAL VITAMIN)
+           ========================================================================== */
+        .vitamin-btn {
+            background: linear-gradient(180deg, #9670f5 0%, #764ce5 100%);
+            border: 1px solid #5a32c2;
+            color: #ffffff !important;
+            border-radius: 999px; 
+            padding: 10px 24px;
+            font-family: var(--font-aeonik);
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+            box-shadow: 
+                inset 0 1.5px 1px rgba(255, 255, 255, 0.4), 
+                inset 0 -2px 4px rgba(0, 0, 0, 0.25), 
+                0 6px 12px rgba(118, 76, 229, 0.3); 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s var(--ease-premium);
+            position: relative;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .vitamin-btn::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 999px;
+            background: transparent;
+            z-index: -1;
+            box-shadow: 0 0 0 0 rgba(118, 76, 229, 0.5);
+            animation: vitamin-vibe 4s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes vitamin-vibe {
+            0% { box-shadow: 0 0 0 0 rgba(118, 76, 229, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(118, 76, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(118, 76, 229, 0); }
+        }
+
+        .vitamin-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #a382f7 0%, #855deb 100%);
+            box-shadow: 
+                inset 0 1.5px 1px rgba(255, 255, 255, 0.5), 
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+                0 10px 20px rgba(118, 76, 229, 0.4);
+        }
+        .vitamin-btn:hover::before {
+            animation: none;
+            box-shadow: 0 0 20px 4px rgba(118, 76, 229, 0.4);
+        }
+
+        .vitamin-btn svg { width: 14px; height: 14px; }
+
+        .nav-pill a.vitamin-btn {
+            min-height: unset;
+            padding: 8px 16px;
+            margin: 2px 2px 2px 8px; 
+            font-size: 9.5px;
+        }
+        @media (max-width: 799px) {
+            .nav-pill a.vitamin-btn {
+                margin: 6px 0 0 0;
+                padding: 16px 20px; 
+                font-size: 13px;
+                width: 100%;
+            }
+        }
+
+        /* Floating Dock Scaling */
+        .float-dock-container {
+            position: fixed;
+            bottom: max(24px, env(safe-area-inset-bottom));
+            right: max(24px, env(safe-area-inset-right));
+            z-index: 9997;
+            will-change: transform;
+            pointer-events: none; 
+        }
+        .float-dock-container .vitamin-btn {
+            pointer-events: auto; 
+        }
+        .float-dock-vitamin {
+            font-size: 11px;
+            padding: 12px 28px; 
+        }
+        @media (max-width: 799px) {
+            .float-dock-container {
+                bottom: calc(max(24px, env(safe-area-inset-bottom)) + 12px);
+            }
+            .float-dock-vitamin {
+                padding: 14px 24px; 
+                font-size: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="spatial-bg"></div>
+
+    <header class="global-header" role="banner">
+        <a href="https://bndrllc.com" class="brand-logo">
+            <img src="https://dl.dropboxusercontent.com/scl/fi/7ctk4j92tclvz0t2bcy8b/BNDR2026Logo5btp.png?rlkey=13a4zb9rrfafh063u759czwnr&st=g2e9ul16&raw=1" alt="BNDR.OS Logo">
+        </a>
+    </header>
+
+    <nav class="nav-pill" id="main-nav" aria-label="Main Navigation">
+        <button id="mobile-nav-toggle" class="mobile-only-toggle" aria-expanded="false">
+            <span class="toggle-text-start">MENU</span>
+            <span class="toggle-text-close">CLOSE</span>
+        </button>
+        <div class="nav-items-wrapper">
+            <div class="nav-items-inner">
+                <a class="route-btn" href="#resources">Resources</a>
+                <a class="route-btn" href="#games">Play</a>
+                <a class="route-btn" href="#utility">Toolbox</a>
+                <a class="route-btn" href="#saas">SaaS</a>
+                <a class="route-btn" href="#breathing">Relax</a>
+                <a class="route-btn" href="#elegance">Style</a>
+                <a class="route-btn" href="#sophistication">Class</a>
+                <a class="route-btn" href="#brand">Brand</a>
+                <a class="route-btn" href="#hometown">Roots</a>
+                <a class="route-btn" href="#treelinkrs">Portfolios</a>
+                <a class="route-btn" href="#sight-movement">Sight+Movement</a>
+                <a class="route-btn" href="#sound-sight">Sound+Sight</a>
+                <a class="route-btn" href="#additional">Additional</a>
+                <a class="vitamin-btn" href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04">Support</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container" id="grid-mount" role="main">
+    </main>
+
+    <div id="dock-container" class="float-dock-container">
+        <a href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" class="vitamin-btn float-dock-vitamin" aria-label="Support BNDR">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span>Support BNDR</span>
+        </a>
+    </div>
+
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+        <filter id="fizzle-physics">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="1">
+                <animate attributeName="seed" from="1" to="100" dur="0.5s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="4" />
+        </filter>
+    </svg>
+
+    <footer id="bndr-base-footer" role="contentinfo">
+        <div class="f-layout">
+            <div class="f-axis-legal">
+                <div class="f-row">
+                    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=dgn3s7uz&dl=0">PRIVACY</a>
+                    <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&st=af3kun5i&dl=0">TERMS</a>
+                </div>
+                <a href="mailto:bndr.labs@gmail.com" style="opacity: 0.3;">BNDR.LABS@GMAIL.COM</a>
+            </div>
+
+            <div class="f-belt">
+                <a href="https://www.linkedin.com/in/bndrtech/" class="li" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+                <a href="https://substack.com/@bndrllc" class="ss" aria-label="Substack">
+                    <svg viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+                </a>
+                <a href="https://github.com/bndrbots" class="gh" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113-.82-.258-.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                </a>
+                <a href="https://www.instagram.com/bndrllc" class="ig" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm3.98-10.98a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/BNDRLLC" class="fb" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://buymeacoffee.com/bndr" class="bc" aria-label="Coffee">
+                    <svg viewBox="0 0 24 24"><path d="M20.216 10.372c-.08-.43-.464-.741-.9-.741h-1.576V6.155c0-1.283-1.042-2.325-2.325-2.325H4.557C3.275 3.83 2.233 4.872 2.233 6.155v7.26c0 2.41 1.957 4.367 4.367 4.367h6.634c2.25 0 4.108-1.71 4.336-3.905h1.218c1.378 0 2.502-1.124 2.502-2.502.001-1.037-.803-1.886-1.074-2.003zM15.415 15.61H6.6c-1.21 0-2.195-.985-2.195-2.195V6.155c0-.085.068-.153.153-.153h10.858c.085 0 .153.068.153.153v9.455zm2.934-2.906h-1.173V11.8h1.173c.18 0 .327.147.327.327 0 .314-.262.578-.327.578zM10.15 2.115c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0zm3.87 0c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0z"/></svg>
+                </a>
+                <a href="https://bndrllc.gumroad.com/" class="gr" aria-label="Gumroad">
+                    <svg viewBox="0 0 24 24"><path d="M18.8 8.43c0 2.84-2.28 5.16-5.12 5.16-2.85 0-5.17-2.32-5.17-5.16 0-2.85 2.32-5.17 5.17-5.17 2.84 0 5.12 2.32 5.12 5.17zm-10.29 0c0-1.93-1.44-3.52-3.32-3.76v7.52c1.88-.24 3.32-1.83 3.32-3.76zM13.68 20.8v-5.63c-2.3-.4-4.14-2.19-4.63-4.46H3.45c.44 5.33 4.9 9.55 10.23 10.09z"/></svg>
+                </a>
+                <a href="https://promptbase.com/profile/bndrllc" class="pb" aria-label="PromptBase">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </a>
+            </div>
+
+            <div class="f-actions">
+                <a href="tel:7179197731" class="f-util">Call Direct</a>
+                <button class="f-util connect-section-trigger">Start Build</button>
+            </div>
+
+            <div class="f-meta">
+                <div class="f-time" id="f-clock-active">00:00:00</div>
+                <div class="f-copy">© 2026 BNDR LLC</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const clk = document.getElementById('f-clock-active');
+            const updateClock = () => {
+                if(clk) clk.textContent = new Date().toTimeString().split(' ')[0];
+            };
+            setInterval(updateClock, 1000); updateClock();
+
+            document.querySelectorAll('a').forEach(a => {
+                if (a.href && a.href.startsWith('http')) {
+                    a.setAttribute('tar' + 'get', '_blank');
+                    a.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+        })();
+
+        const linkData = [
+            {
+                category: "RESOURCES",
+                id: "resources",
+                links: ["https://bndrbots.github.io/resourcecite/#home"]
+            },
+            {
+                category: "PLAY",
+                id: "games",
+                links: [
+                    "https://bndrbots.github.io/RogueRitaV3/",
+                    "https://bndrbots.github.io/RogueRitaV2/",
+                    "https://bndrbots.github.io/RogueRitaV1/",
+                    "https://bndrbots.github.io/endlessfocus/",
+                    "https://bndrbots.github.io/calmheist/",
+                    "https://bndrmix-production.up.railway.app/"
+                ]
+            },
+            {
+                category: "TOOLBOX",
+                id: "utility",
+                links: [
+                    "https://bndrbots.github.io/mindcan/",
+                    "https://bndrbots.github.io/BNDRVoice/",
+                    "https://bndrbots.github.io/decisionengine/",
+                    "https://bndrbots.github.io/slct/",
+                    "https://bndrbots.github.io/binaural/",
+                    "https://bndrbots.github.io/BNDR_LifeMatrix/",
+                    "https://bndrbots.github.io/BNDR-Dashboard/",
+                    "https://bndrbots.github.io/transcriber/"
+                ]
+            },
+            {
+                category: "SAAS",
+                id: "saas",
+                links: ["https://bndrbots.github.io/forma/", "https://bndrbots.github.io/raydeo/"]
+            },
+            {
+                category: "RELAX",
+                id: "breathing",
+                links: [
+                    "https://bndrbots.github.io/Qalm/",
+                    "https://bndrbots.github.io/breathemachine/",
+                    "https://bndrbots.github.io/breather/",
+                    "https://bndrbots.github.io/rosefieldvip/",
+                    "https://bndrbots.github.io/crystal_love/"
+                ]
+            },
+            {
+                category: "STYLE",
+                id: "elegance",
+                links: [
+                    "https://bndrbots.github.io/EpochAura/",
+                    "https://bndrbots.github.io/Sangredelsol/",
+                    "https://bndrbots.github.io/controlledoutput/",
+                    "https://bndrbots.github.io/interactivelander/"
+                ]
+            },
+            {
+                category: "CLASS",
+                id: "sophistication",
+                links: [
+                    "https://bndrbots.github.io/immersion/",
+                    "https://bndrbots.github.io/PrivateWealth/",
+                    "bndrbots.github.io/jacksons/",
+                    "https://bndrbots.github.io/Voss/",
+                    "https://bndrbots.github.io/Biltmore_Advisory/",
+                    "https://bndrbots.github.io/BNDR_Audits/"
+                ]
+            },
+            {
+                category: "BRAND",
+                id: "brand",
+                links: [
+                    "https://bndrbots.github.io/VenomCuts/",
+                    "https://bndrbots.github.io/northr/",
+                    "https://bndrbots.github.io/reflex/",
+                    "https://bndrbots.github.io/TheFeedUpgraded/",
+                    "https://bndrbots.github.io/verdict/",
+                    "https://bndrbots.github.io/demo/",
+                    "https://bndrbots.github.io/mesaindustrial/"
+                ]
+            },
+            {
+                category: "ROOTS",
+                id: "hometown",
+                links: ["https://bndrbots.github.io/Evies_Cafe/"]
+            },
+            {
+                category: "PORTFOLIOS",
+                id: "treelinkrs",
+                links: [
+                    "https://bndrbots.github.io/linktree1/",
+                    "https://bndrbots.github.io/obsidianlinktree/",
+                    "https://bndrbots.github.io/sharplinktreefx/",
+                    "https://bndrbots.github.io/LinkTreePlus/#home",
+                    "https://bndrbots.github.io/Linktree3/"
+                ]
+            },
+            {
+                category: "SIGHT+MOVEMENT (CONCEPTS)",
+                id: "sight-movement",
+                links: [
+                    "https://bndrbots.github.io/heavyink/",
+                    "https://bndrbots.github.io/bruma/",
+                    "https://bndrbots.github.io/patience/",
+                    "https://bndrbots.github.io/fluidribbon/",
+                    "https://bndrbots.github.io/secondchancephysics/",
+                    "https://bndrbots.github.io/pixelmelt/",
+                    "https://bndrbots.github.io/lifespace/",
+                    "https://bndrbots.github.io/liquidglass/",
+                    "https://bndrbots.github.io/demo/",
+                    "https://bndrbots.github.io/thewaitinggame/",
+                    "https://bndrbots.github.io/gravitywells/",
+                    "https://bndrbots.github.io/distortion/",
+                    "https://bndrbots.github.io/DATASTREAM/",
+                    "https://bndrbots.github.io/volumetric/"
+                ]
+            },
+            {
+                category: "SOUND+SIGHT+MOVEMENT (CONCEPTS)",
+                id: "sound-sight",
+                links: [
+                    "https://bndrbots.github.io/zen/",
+                    "https://bndrbots.github.io/oilflux/",
+                    "https://bndrbots.github.io/playinginthedark/",
+                    "https://bndrbots.github.io/solarexpanse/",
+                    "https://bndrbots.github.io/fluidity/",
+                    "https://bndrbots.github.io/zen/",
+                    "https://bndrbots.github.io/Bluestrunimous/",
+                    "https://bndrbots.github.io/templegarden/",
+                    "https://bndrbots.github.io/bendystrings/",
+                    "https://bndrbots.github.io/acousticshockwave/",
+                    "https://bndrbots.github.io/boop/",
+                    "https://bndrbots.github.io/morph_black/",
+                    "https://bndrbots.github.io/somaflux/",
+                    "https://bndrbots.github.io/wearit/"
+                ]
+            },
+            {
+                category: "ADDITIONAL TOOLS",
+                id: "additional",
+                links: [
+                    "https://bndrbots.github.io/Graffiti-Generator/",
+                    "https://bndrbots.github.io/prompts/",
+                    "https://bndrbots.github.io/ctnc/"
+                ]
+            }
+        ];
+
+        const mount = document.getElementById('grid-mount');
+        function formatHref(url) { return url.startsWith('http') ? url : `https://${url}`; }
+
+        let htmlString = '';
+        linkData.forEach(section => {
+            htmlString += `
+                <section id="${section.id}" class="category-block">
+                    <header class="category-header">
+                        <div class="section-badge">${section.category}</div>
+                        <span class="module-count">${section.links.length} modules</span>
+                    </header>
+                    <div class="strict-grid">
+                        ${section.links.map(url => `
+                            <a href="${formatHref(url)}" class="grid-card" data-url="${formatHref(url)}">
+                                <div class="card-meta">
+                                    <span class="url-text">${url}</span>
+                                    <div class="state-dot"></div>
+                                </div>
+                                <div class="preview-window">
+                                    <div class="loader-pattern"><span class="loader-text">Loading Window</span></div>
+                                </div>
+                                <div class="card-action">
+                                    <span class="action-label">Open Application</span>
+                                    <svg class="action-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        });
+        mount.innerHTML = htmlString;
+
+        document.querySelectorAll('.grid-card').forEach(a => {
+            a.setAttribute('tar' + 'get', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+        });
+
+        const previewWindows = document.querySelectorAll('.grid-card');
+        const requestIdle = window.requestIdleCallback || function(cb) { setTimeout(cb, 1); };
+        
+        const previewObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const targetWindow = entry.target.querySelector('.preview-window');
+                if (entry.isIntersecting) {
+                    if (!targetWindow.querySelector('.live-iframe')) {
+                        requestIdle(() => {
+                            if (!entry.isIntersecting) return; 
+                            const iframe = document.createElement('iframe');
+                            iframe.className = 'live-iframe';
+                            iframe.loading = 'lazy';
+                            iframe.sandbox = 'allow-scripts allow-same-origin';
+                            iframe.src = entry.target.dataset.url;
+                            iframe.onload = () => iframe.classList.add('is-loaded');
+                            targetWindow.appendChild(iframe);
+                        });
+                    }
+                } else {
+                    const existingIframe = targetWindow.querySelector('.live-iframe');
+                    if (existingIframe) existingIframe.remove();
+                }
+            });
+        }, { rootMargin: '100% 0px 100% 0px' });
+        
+        previewWindows.forEach(card => previewObserver.observe(card));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navPill = document.getElementById('main-nav');
+            const mobileToggle = document.getElementById('mobile-nav-toggle');
+            
+            if (mobileToggle && navPill) {
+                mobileToggle.addEventListener('click', () => {
+                    navPill.classList.toggle('is-open');
+                    mobileToggle.setAttribute('aria-expanded', navPill.classList.contains('is-open'));
+                });
+                
+                navPill.querySelectorAll('.route-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        navPill.classList.remove('is-open');
+                        mobileToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
+            setTimeout(() => {
+                if(navPill) navPill.classList.add('is-loaded');
+            }, 100);
+
+            let lastScroll = 0;
+            let scrollEndTimer = null;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollEndTimer);
+                const currentScroll = window.scrollY;
+                
+                if (currentScroll > 150 && currentScroll > lastScroll) {
+                    navPill.classList.add('hidden');
+                } else {
+                    navPill.classList.remove('hidden');
+                }
+                lastScroll = currentScroll;
+            }, { passive: true });
+
+            const dockContainer = document.getElementById('dock-container');
+            const footerElement = document.getElementById('bndr-base-footer');
+            
+            if (dockContainer && footerElement) {
+                let ticking = false;
+                const updateDock = () => {
+                    const footerRect = footerElement.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+                    
+                    if (footerRect.top < viewportHeight) {
+                        const overlap = viewportHeight - footerRect.top;
+                        dockContainer.style.transform = `translateY(-${overlap}px)`;
+                    } else {
+                        dockContainer.style.transform = 'translateY(0)';
+                    }
+                    ticking = false;
+                };
+                
+                const onScroll = () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(updateDock);
+                        ticking = true;
+                    }
+                };
+                
+                window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
+                updateDock();
+            }
+        });
+    </script>
+
+<style>
+  @media (pointer: coarse) {
+      * { cursor: auto !important; }
+      #point-cursor-container { display: none !important; }
+  }
+
+  @media (pointer: fine) {
+      * { cursor: none !important; }
       
-      try {
-        history.replaceState(null, "", u.toString());
-      } catch (err) {
-        console.warn("History API prevented by sandbox environment.", err);
+      #point-cursor-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 999999;
+        mix-blend-mode: difference;
+        will-change: transform;
+        transition: transform 0.08s ease-out;
       }
-    }
 
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function renderTags(){
-      const tagsEl = $("#tags");
-      const tags = new Set(["All"]);
-      PROMPTS.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
-
-      tagsEl.innerHTML = "";
-      [...tags].forEach(t => {
-        const b = document.createElement("button");
-        b.className = `tag${t === activeTag ? " is-active" : ""}`;
-        b.type = "button";
-        b.textContent = t;
-        b.addEventListener("click", () => {
-          activeTag = t;
-          const q = $("#q").value || "";
-          setQueryState({ q, tag: activeTag });
-          render();
-          renderTags();
-        });
-        tagsEl.appendChild(b);
-      });
-    }
-
-    function cardTemplate(p){
-      const safeId = p.id || crypto.randomUUID();
-      const title = p.title || "Untitled";
-      const lang = p.lang || "text";
-      const body = p.body || "";
-
-      return `
-        <section class="code-card" id="${safeId}" data-code-card>
-          <header class="code-card__header">
-            <div class="code-card__left">
-              <span class="code-card__lang">${lang}</span>
-              <span class="code-card__title">${title}</span>
-            </div>
-
-            <div class="code-card__actions">
-              <button class="copy" type="button" data-prompt-btn aria-label="Copy prompt">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M9 6h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
-                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M7 18H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"
-                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span data-prompt-label>Copy Prompt</span>
-              </button>
-            </div>
-          </header>
-
-          <div class="code-card__body">
-            <pre><code data-code>${escapeHtml(body)}</code></pre>
-          </div>
-        </section>
-      `;
-    }
-
-    function wireCardEvents(root){
-      root.querySelectorAll("[data-code-card]").forEach(card => {
-        const promptBtn = card.querySelector("[data-prompt-btn]");
-        const codeEl = card.querySelector("[data-code]");
-        const promptLabel = card.querySelector("[data-prompt-label]");
-
-        promptBtn.addEventListener("click", async () => {
-          await copyText(codeEl.textContent);
-          const old = promptLabel.textContent;
-          promptLabel.textContent = "Copied";
-          promptBtn.classList.add("is-copied");
-          setTimeout(() => { promptLabel.textContent = old; promptBtn.classList.remove("is-copied"); }, 1100);
-        });
-      });
-    }
-
-    function render(){
-      const grid = $("#grid");
-      const count = $("#count");
-      const q = normalize($("#q").value);
-
-      const filtered = PROMPTS.filter(p => {
-        const inTag = activeTag === "All" || (p.tags || []).includes(activeTag);
-        if (!inTag) return false;
-        if (!q) return true;
-        const hay = normalize(`${p.title || ""}\n${p.body || ""}\n${(p.tags || []).join(" ")}`);
-        return hay.includes(q);
-      });
-
-      count.textContent = `${filtered.length} / ${PROMPTS.length} prompts`;
-      grid.innerHTML = filtered.map(cardTemplate).join("");
-      wireCardEvents(grid);
-    }
-
-    function init(){
-      const state = getQueryState();
-      activeTag = state.tag || "All";
-
-      $("#q").value = state.q || "";
-      $("#q").addEventListener("input", () => {
-        setQueryState({ q: $("#q").value, tag: activeTag });
-        render();
-      });
-
-      $("#clear").addEventListener("click", () => {
-        $("#q").value = "";
-        activeTag = "All";
-        setQueryState({ q: "", tag: "All" });
-        renderTags();
-        render();
-      });
-
-      renderTags();
-      render();
-
-      updateScrollPct();
-      window.addEventListener("scroll", updateScrollPct, { passive: true });
-
-      if (location.hash) {
-        const el = document.querySelector(location.hash);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      .point-shape {
+        display: block;
+        width: 14px;
+        height: 14px;
+        transform-origin: center center;
+        filter: url(#point-glow);
+        transition: transform 0.25s ease;
       }
+
+      .rotating .point-shape {
+        animation: point-spin 1.2s linear infinite;
+      }
+  }
+
+  @keyframes point-spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute;display:none;">
+  <defs>
+    <filter id="point-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<script>
+  (function () {
+    if (window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window)) return;
+
+    const HEX_LIST = ['#E8E4DF', '#404040', '#CCFF00', '#FF0055']; 
+
+    const pointSVG = `
+      <svg class="point-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,0 62,38 100,50 62,62 50,100 38,62 0,50 38,38" fill="var(--cursor-color, white)" />
+      </svg>`;
+
+    const container = document.createElement('div');
+    container.id = 'point-cursor-container';
+    container.innerHTML = pointSVG;
+    document.body.appendChild(container);
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
+    }
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+    function interpolateHex(hex1, hex2, t) {
+      const c1 = hexToRgb(hex1);
+      const c2 = hexToRgb(hex2);
+      return rgbToHex(
+        lerp(c1.r, c2.r, t),
+        lerp(c1.g, c2.g, t),
+        lerp(c1.b, c2.b, t)
+      );
     }
 
-    document.addEventListener("DOMContentLoaded", init);
-  </script>
+    const cycleDuration = 1200; 
+    let startTime = performance.now();
+    function morphColour() {
+      const now = performance.now();
+      const elapsed = now - startTime;
+      const segmentCount = HEX_LIST.length;
+      const totalTime = segmentCount * cycleDuration;
+      const scaledT = (elapsed % totalTime) / totalTime; 
+
+      const segmentFloat = scaledT * segmentCount;
+      const idx = Math.floor(segmentFloat);
+      const t = segmentFloat - idx;
+      const from = HEX_LIST[idx % segmentCount];
+      const to = HEX_LIST[(idx + 1) % segmentCount];
+      const hex = interpolateHex(from, to, t);
+      container.style.setProperty('--cursor-color', hex);
+      requestAnimationFrame(morphColour);
+    }
+    requestAnimationFrame(morphColour);
+
+    let mouseX = -100, mouseY = -100;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      container.style.transform = `translate(${mouseX - 7}px, ${mouseY - 7}px)`;
+
+      const target = e.target;
+      const interactive = target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      container.classList.toggle('rotating', !!interactive);
+    });
+
+    document.addEventListener('mouseover', (e) => {
+      const interactive = e.target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      if (interactive) container.classList.add('rotating');
+    });
+    document.addEventListener('mouseout', (e) => {
+      const interactive = e.target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      if (!interactive) container.classList.remove('rotating');
+    });
+    document.addEventListener('mouseleave', () => container.style.opacity = '0');
+    document.addEventListener('mouseenter', () => container.style.opacity = '1');
+  })();
+</script>
+
 </body>
 </html>
