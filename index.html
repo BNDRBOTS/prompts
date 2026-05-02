@@ -6,13 +6,21 @@
   <title>Prompt Vault</title>
   <style>
     :root {
-      --bg: #0b0b0f;
-      --card2: rgba(0,0,0,.22);
-      --border: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
-      --muted2: rgba(255,255,255,.45);
-      --shadow: 0 18px 44px rgba(0,0,0,.62);
+      /* BNDR COLORS - Lux Light Theme */
+      --bg: #F5F3ED; /* Warm bone/light beige */
+      --card-bg: #FFFFFF; /* Soft white */
+      --card2: #FAFAFA; /* Light grey for code blocks */
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #111111; /* Black */
+      --muted: rgba(0, 0, 0, 0.65);
+      --muted2: rgba(0, 0, 0, 0.45);
+      --shadow: 0 12px 34px rgba(0, 0, 0, 0.04);
+      
+      /* Accents */
+      --glow-olive: rgba(85, 107, 47, 0.06);
+      --glow-magenta: rgba(139, 0, 139, 0.05);
+      --glow-red: rgba(230, 57, 70, 0.04);
+
       --radius: 18px;
       --radius2: 14px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -26,23 +34,26 @@
       margin: 0;
       font-family: var(--sans);
       color: var(--text);
+      /* Balanced Lux BNDR Background */
       background:
-        radial-gradient(1100px 600px at 18% -10%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(900px 600px at 85% 0%, rgba(255,255,255,.04), transparent 60%),
+        radial-gradient(1100px 600px at 18% -10%, var(--glow-magenta), transparent 60%),
+        radial-gradient(900px 600px at 85% 0%, var(--glow-olive), transparent 60%),
+        radial-gradient(800px 800px at 50% 100%, var(--glow-red), transparent 60%),
         var(--bg);
-      /* Increased bottom padding to 100px so content easily clears the 60px fixed footer */
-      padding: 28px 16px 100px;
+      
+      /* Explicit padding to halt cards from scrolling behind the fixed footer */
+      padding: 28px 16px 140px; 
     }
 
     .bg-noise {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .06;
-      mix-blend-mode: overlay;
+      opacity: .03;
+      mix-blend-mode: multiply;
       background:
-        repeating-radial-gradient(circle at 20% 10%, rgba(255,255,255,.8) 0 1px, transparent 1px 3px),
-        repeating-radial-gradient(circle at 70% 60%, rgba(255,255,255,.6) 0 1px, transparent 1px 4px);
+        repeating-radial-gradient(circle at 20% 10%, rgba(0,0,0,0.8) 0 1px, transparent 1px 3px),
+        repeating-radial-gradient(circle at 70% 60%, rgba(0,0,0,0.6) 0 1px, transparent 1px 4px);
       filter: blur(.4px);
       z-index: -1;
     }
@@ -56,7 +67,6 @@
       gap: 18px;
     }
 
-    /* user-select: none strictly scoped to interactive/non-content UI */
     .brand__kicker {
       font-family: var(--mono);
       font-size: 12px;
@@ -87,27 +97,29 @@
       padding: 12px 12px;
       border-radius: 12px;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
+      background: var(--card-bg);
       color: var(--text);
       outline: none;
       font-family: var(--mono);
       font-size: 13px;
-      transition: border-color .15s ease;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
-    .input:focus { border-color: rgba(255,255,255,.2); }
-    .input::placeholder { color: rgba(255,255,255,.38); }
+    .input:focus { border-color: rgba(0,0,0,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .input::placeholder { color: var(--muted2); }
 
     .btn {
       padding: 12px 12px;
       border-radius: 12px;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
+      background: var(--card-bg);
+      color: var(--text);
       font-family: var(--mono);
       font-size: 13px;
       cursor: pointer;
       user-select: none;
-      transition: background .15s ease, color .15s ease;
+      transition: background .15s ease, border-color .15s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
     .tags {
@@ -124,13 +136,14 @@
       padding: 9px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
+      background: var(--card-bg);
       color: var(--muted);
       cursor: pointer;
       user-select: none;
-      transition: background .15s ease, color .15s ease;
+      transition: all .15s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
-    .tag.is-active { background: rgba(255,255,255,.08); color: rgba(255,255,255,.92); }
+    .tag.is-active { background: var(--text); color: #FFFFFF; border-color: var(--text); }
 
     .wrap { max-width: 1040px; margin: 0 auto; }
 
@@ -144,13 +157,13 @@
     .grid { display: grid; gap: 16px; }
 
     .code-card {
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
       transform: translateY(0);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
     }
 
     .code-card__header {
@@ -180,7 +193,8 @@
     .code-card__title {
       font-family: var(--mono);
       font-size: 13px;
-      color: rgba(255,255,255,.78);
+      color: var(--text);
+      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -201,11 +215,11 @@
       font-size: 13px;
       cursor: pointer;
       user-select: none;
-      transition: background .15s ease, border-color .15s ease, color .15s ease, transform .05s ease;
+      transition: all .15s ease;
     }
     .copy:active { transform: translateY(1px); }
     .copy svg { width: 16px; height: 16px; opacity: .9; }
-    .copy.is-copied { color: rgba(120,255,170,.92); }
+    .copy.is-copied { color: #15803d; }
 
     .code-card__body { padding: 0 16px 16px 16px; }
 
@@ -213,7 +227,7 @@
       margin: 0;
       padding: 14px 14px;
       background: var(--card2);
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(0,0,0,0.03);
       border-radius: var(--radius2);
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -226,78 +240,44 @@
     }
 
     pre::-webkit-scrollbar { height: 10px; width: 10px; }
-    pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
-    pre::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
+    pre::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 999px; }
+    pre::-webkit-scrollbar-track { background: transparent; border-radius: 999px; }
 
-    /* Desktop Hover States Encapsulated */
+    /* Desktop Hover States */
     @media (hover: hover) {
-      .btn:hover { background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
-      .tag:hover { background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
-      .copy:hover { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.07); color: rgba(255,255,255,.82); }
+      .btn:hover { background: #fafafa; border-color: rgba(0,0,0,0.15); }
+      .tag:hover:not(.is-active) { background: #fafafa; border-color: rgba(0,0,0,0.15); }
+      .copy:hover { background: rgba(0,0,0,0.03); color: var(--text); border-color: rgba(0,0,0,0.05); }
       .code-card:hover {
         transform: translateY(-2px);
-        border-color: rgba(255,255,255,.12);
-        background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+        border-color: rgba(0,0,0,0.12);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.06), 0 4px 12px var(--glow-magenta);
       }
-    }
-
-    /* Remove interactive cursors on touch devices strictly */
-    @media (pointer: coarse) {
-      .btn, .tag, .copy, a { cursor: default !important; }
     }
 
     /* Mobile First Adjustments */
     @media (max-width: 720px) {
-      body {
-        /* Mobile padded bottom significantly to clear stacked footer */
-        padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 180px max(16px, env(safe-area-inset-left));
-      }
+      body { padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 180px max(16px, env(safe-area-inset-left)); }
       .topbar { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
       .brand__title { font-size: 32px; }
       .topbar__right { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-      
       .controls { width: 100%; display: flex; gap: 10px; }
-      .input { 
-        flex-grow: 1; 
-        width: auto; 
-        font-size: 16px; 
-        min-height: 44px; 
-        padding: 12px 16px;
-      }
-      
-      .btn {
-        min-height: 44px;
-        padding: 12px 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
+      .input { flex-grow: 1; width: auto; font-size: 16px; min-height: 44px; padding: 12px 16px; }
+      .btn { min-height: 44px; padding: 12px 16px; display: inline-flex; align-items: center; justify-content: center; }
       .tags { gap: 6px; }
-      .tag {
-        min-height: 44px;
-        padding: 10px 16px;
-        font-size: 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
+      .tag { min-height: 44px; padding: 10px 16px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; }
       .code-card__header { padding: 16px; }
-      .copy { 
-        min-height: 44px; 
-        padding: 10px 14px; 
-      }
+      .copy { min-height: 44px; padding: 10px 14px; }
       .copy span { display: none; }
     }
 
-    /* Fixed Dark Footer exactly matching user specifications */
+    /* Strict Dark Footer Injection */
     .bndr-footer {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      min-height: 60px; /* ~1 inch tall */
+      min-height: 60px;
       background: #000000;
       color: #ffffff;
       display: flex;
@@ -306,7 +286,7 @@
       padding: 0 24px;
       font-family: var(--mono);
       z-index: 9999;
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.8);
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
       flex-wrap: wrap;
       gap: 10px;
     }
@@ -326,8 +306,24 @@
     .bndr-email { color: #666666; font-size: 11px; letter-spacing: 0.5px; }
 
     .bndr-footer__socials { gap: 14px; align-items: center; }
-    .bndr-social-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.15s ease; }
-    .bndr-social-icon:hover { opacity: 1; }
+    .bndr-social-icon { 
+      width: 18px; 
+      height: 18px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      opacity: 0.75; 
+      transition: all 0.2s ease; 
+      color: inherit;
+    }
+    
+    /* Hover Glow Accents */
+    .bndr-social-icon:hover { 
+      opacity: 1; 
+      transform: translateY(-2px);
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
     .bndr-social-icon svg { width: 100%; height: 100%; }
 
     .bndr-footer__actions { gap: 12px; }
@@ -387,48 +383,56 @@
 
     <div class="bndr-footer__center-left">
       <div class="bndr-links">
-        <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=iakils4n&raw=1" target="_blank" rel="noopener noreferrer">PRIVACY</a>
-        <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=28ft9zz3&raw=1" target="_blank" rel="noopener noreferrer">TERMS</a>
+        <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&e=1&st=dgn3s7uz&dl=0" target="_blank" rel="noopener noreferrer">PRIVACY</a>
+        <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&e=1&st=af3kun5i&dl=0" target="_blank" rel="noopener noreferrer">TERMS</a>
       </div>
       <span class="bndr-email">BNDR.LABS@GMAIL.COM</span>
     </div>
 
     <div class="bndr-footer__socials">
       <!-- LinkedIn -->
-      <a href="#" class="bndr-social-icon" aria-label="LinkedIn">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      <a href="https://www.linkedin.com/in/bndrtech/" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="LinkedIn" style="color: #0A66C2;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
       </a>
       <!-- Substack -->
-      <a href="#" class="bndr-social-icon" aria-label="Substack">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+      <a href="https://substack.com/@bndrllc" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Substack" style="color: #FF6719;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
       </a>
       <!-- GitHub -->
-      <a href="#" class="bndr-social-icon" aria-label="GitHub">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      <a href="https://github.com/BNDRBOTS" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="GitHub" style="color: #FFFFFF;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
       </a>
       <!-- Instagram -->
-      <a href="#" class="bndr-social-icon" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <a href="https://www.instagram.com/bndrllc" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Instagram" style="color: #E1306C;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
         </svg>
       </a>
       <!-- Facebook -->
-      <a href="#" class="bndr-social-icon" aria-label="Facebook">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      <a href="https://www.facebook.com/BNDRLLC" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Facebook" style="color: #1877F2;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       </a>
       <!-- Buy Me a Coffee -->
-      <a href="#" class="bndr-social-icon" aria-label="Buy Me a Coffee">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M20.216 10.222c-.104-.694-.654-1.22-1.353-1.303l-1.91-.225c-.218-1.57-.463-3.69-.533-5.068-.042-.806-.715-1.427-1.523-1.427H4.407c-.808 0-1.48.621-1.523 1.427-.07 1.378-.315 3.498-.533 5.068l-1.91.225c-.7.083-1.25.61-1.353 1.303-.133.882-.236 1.855-.236 2.87 0 5.334 3.96 9.712 9.155 10.428 1.41.194 2.853.194 4.263 0 5.195-.716 9.155-5.094 9.155-10.428 0-1.015-.103-1.988-.236-2.87zm-4.782-4.997c.05 1.05.21 2.65.378 4.053l-10.602 1.25c.168-1.403.328-3.003.378-4.053h9.846zm-2.07 14.156c-1.31.18-2.66.18-3.97 0-4.095-.563-7.227-3.99-7.227-8.156 0-.66.06-1.307.16-1.928l11.053-1.304c.1.62.16 1.268.16 1.928 0 4.166-3.132 7.593-7.227 8.156zm6.398-9.066c-.053.35-.118.694-.194 1.03l-1.874.22c.076-.336.14-.68.193-1.03l1.875-.22z"/></svg>
+      <a href="https://buymeacoffee.com/bndr" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Buy Me a Coffee" style="color: #FFDD00;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.216 10.222c-.104-.694-.654-1.22-1.353-1.303l-1.91-.225c-.218-1.57-.463-3.69-.533-5.068-.042-.806-.715-1.427-1.523-1.427H4.407c-.808 0-1.48.621-1.523 1.427-.07 1.378-.315 3.498-.533 5.068l-1.91.225c-.7.083-1.25.61-1.353 1.303-.133.882-.236 1.855-.236 2.87 0 5.334 3.96 9.712 9.155 10.428 1.41.194 2.853.194 4.263 0 5.195-.716 9.155-5.094 9.155-10.428 0-1.015-.103-1.988-.236-2.87zm-4.782-4.997c.05 1.05.21 2.65.378 4.053l-10.602 1.25c.168-1.403.328-3.003.378-4.053h9.846zm-2.07 14.156c-1.31.18-2.66.18-3.97 0-4.095-.563-7.227-3.99-7.227-8.156 0-.66.06-1.307.16-1.928l11.053-1.304c.1.62.16 1.268.16 1.928 0 4.166-3.132 7.593-7.227 8.156zm6.398-9.066c-.053.35-.118.694-.194 1.03l-1.874.22c.076-.336.14-.68.193-1.03l1.875-.22z"/></svg>
       </a>
-      <!-- Patreon -->
-      <a href="#" class="bndr-social-icon" aria-label="Patreon">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M22.957 7.21c-.004-3.064-2.391-5.576-5.191-6.482-3.478-1.125-8.064-.962-11.384.604C2.357 3.231 1.093 7.391 1.046 11.54c-.039 3.411 1.304 7.306 4.365 9.152 2.923 1.764 7.29 2.08 10.457 1.094 3.738-1.163 7.108-4.321 7.089-8.544V7.21h.01zm-7.661 8.877c-3.15 1.541-7.854 1.233-10.432-.693-2.697-2.016-3.036-6.197-2.348-9.288C3.593 1.291 10.366-1.16 14.935 1.547c3.15 1.868 4.09 6.22 2.656 9.38-1.01 2.228-2.522 3.193-5.12 3.518h-.002z"/></svg>
+      <!-- Gumroad -->
+      <a href="https://bndrllc.gumroad.com/" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Gumroad" style="color: #FF90E8;">
+        <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2Zm0 22a8 8 0 1 1 8-8 8.01 8.01 0 0 1-8 8Zm0-13a5 5 0 1 0 5 5 5 5 0 0 0-5-5Z"/></svg>
       </a>
-      <!-- Lightning -->
-      <a href="#" class="bndr-social-icon" aria-label="Lightning">
-        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M11.5 0L1 14h8l-2.5 10L19 10h-7.5L14 0h-2.5z"/></svg>
+      <!-- PromptBase -->
+      <a href="https://promptbase.com/profile/bndrllc" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="PromptBase" style="color: #00FF00;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+      </a>
+      <!-- Proppz -->
+      <a href="https://propps.me/bndrllc" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Proppz" style="color: #8A2BE2;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </a>
+      <!-- BNDR Portfolio -->
+      <a href="https://bndrbots.github.io/portfolio/" target="_blank" rel="noopener noreferrer" class="bndr-social-icon" aria-label="Portfolio" style="color: #00FFFF;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
       </a>
     </div>
 
@@ -1921,17 +1925,6 @@
       wireCardEvents(grid);
     }
 
-    function updateFooterClock() {
-      const now = new Date();
-      const hrs = String(now.getHours()).padStart(2, '0');
-      const mins = String(now.getMinutes()).padStart(2, '0');
-      const secs = String(now.getSeconds()).padStart(2, '0');
-      const clockEl = document.getElementById('live-clock');
-      if (clockEl) {
-        clockEl.textContent = `${hrs}:${mins}:${secs}`;
-      }
-    }
-
     function init() {
       const state = getQueryState();
       activeTag = state.tag || "All";
@@ -1957,9 +1950,6 @@
         const el = document.querySelector(location.hash);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-
-      setInterval(updateFooterClock, 1000);
-      updateFooterClock();
     }
 
     document.addEventListener("DOMContentLoaded", init);
