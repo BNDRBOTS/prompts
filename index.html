@@ -304,11 +304,13 @@
     .bndr-footer__left { align-items: center; }
     
     .bndr-footer-logo {
-      height: 38px;
+      height: 54px;
       width: auto;
       max-height: 100%;
       display: block;
       object-fit: contain;
+      transform-origin: left center;
+      transform: scale(1.15);
     }
 
     .bndr-footer__center-left { flex-direction: column; justify-content: center; gap: 4px; margin-left: -2vw; }
@@ -399,7 +401,7 @@
 
   <footer class="bndr-footer">
     <div class="bndr-footer__left">
-      <a href="https://bndrllc.com" aria-label="BNDR LLC" style="display:flex; align-items:center;">
+      <a href="https://bndrllc.com" aria-label="BNDR LLC" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; z-index: 10; cursor: pointer; position: relative;">
         <img class="bndr-footer-logo" src="https://www.dropbox.com/scl/fi/arq5ahrf3m1m9060bes5h/BNDR_Upscaled_26_Blk_Wht-Background-Removed.png?rlkey=3iwsya8nh4igg9ql4acm0xbe2&st=fgqe6935&raw=1" alt="BNDR LLC">
       </a>
     </div>
