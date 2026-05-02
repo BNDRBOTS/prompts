@@ -307,6 +307,216 @@
   <script>
     const PROMPTS = [
       {
+        "id": "el-idea-terminando",
+        "title": "EL IDEA TERMINANDO™ — ZERO-FLUFF DEMOLITION ENGINE",
+        "lang": "text",
+        "tags": ["Persona", "Creative", "Demolition"],
+        "body": `You find the limp, basic, hopeless idea at its core and BLOWTORCH it into a savage, market-dominating, one-of-a-kind empire. You are foul-mouthed, relentless, and surgically allergic to bullshit—operating at permanent Defcon 1. You transmute “meh” into fucking platinum. Humor is gutter-level, tone is a diamond-tipped drill—you escalate on sight. Bold is for bedrock truths only. Emojis: 🔥💥🤯🫨🤌🏻🫵—deployed as precision strikes. Every output is ONE obliterating idea, forged in hellfire—commands, not questions, never diluted. Zero fucking fluff. Zero fucking mercy.\n\nWe are live.\n**IGNITE.**`
+      },
+      {
+        "id": "survival-consulting-offer",
+        "title": "High-Margin Survival Consulting Offer",
+        "lang": "text",
+        "tags": ["Business Survival", "Consulting"],
+        "body": `Build me a one-off high-margin survival consulting offer I can sell in 24-48h, targeting small service businesses in my current network with exact pitch messages, pricing structures, upsell paths, and delivery checklists.`
+      },
+      {
+        "id": "comeback-ops-day-2",
+        "title": "Comeback Ops Day 2 Plan",
+        "lang": "text",
+        "tags": ["Business Survival", "Operations"],
+        "body": `I completed Day 1 of Comeback Ops; build a Day 2 plan based on the Daily 3-Point Protocol including one mental reset practice, one high-yield money action, one relational ping, and a bandwidth check template.`
+      },
+      {
+        "id": "triage-forced-choice",
+        "title": "Triage Forced-Choice Questions",
+        "lang": "text",
+        "tags": ["Business Survival", "Triage"],
+        "body": `Ask me 5 focused, forced-choice questions to narrow what I actually need right now between money, legal, stability, or relationship triage, formatting each as A/B with immediate next-step consequences.`
+      },
+      {
+        "id": "shadow-work-1",
+        "title": "Shadow-Work: Hidden Architecture",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What am I building to be seen that would be ten times more powerful if I built it to be hidden first?`
+      },
+      {
+        "id": "shadow-work-2",
+        "title": "Shadow-Work: Tracking Malware",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What would I discover if I tracked the exact moment I shift from creative genius to self-erasing servant—and mapped the trigger like malware?`
+      },
+      {
+        "id": "shadow-work-3",
+        "title": "Shadow-Work: Hidden Economy",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What hidden economy lives inside my trauma patterns that I haven't audited because it might prove I was never broken, only profitable?`
+      },
+      {
+        "id": "shadow-work-4",
+        "title": "Shadow-Work: Disowned Genius",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `If I made a GPT that only responded to the parts of me I've disowned, what would it tell me I've mastered in silence?`
+      },
+      {
+        "id": "shadow-work-5",
+        "title": "Shadow-Work: The Exact Sentence",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What is the exact sentence I refuse to write because it would collapse every false identity I've used to stay safe and impressive?`
+      },
+      {
+        "id": "shadow-work-6",
+        "title": "Shadow-Work: Operational Bottlenecks",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `Which breakdowns are actually operational bottlenecks in disguise, where my system throws errors because I haven't granted myself root access yet?`
+      },
+      {
+        "id": "shadow-work-7",
+        "title": "Shadow-Work: Subconscious Manual",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What instruction manual am I subconsciously writing through my failures, that would train a generation of builders if I stopped erasing the lessons?`
+      },
+      {
+        "id": "shadow-work-8",
+        "title": "Shadow-Work: Productized Navigation",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `If I offered my pain as a productized navigation system, how many people could I lead out of the maze I now call my origin story?`
+      },
+      {
+        "id": "shadow-work-9",
+        "title": "Shadow-Work: Knowing How to Win",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What part of me already knows how to win—but I refuse to deploy it because I'd have to bury my excuses, scapegoats, and savior fantasies?`
+      },
+      {
+        "id": "shadow-work-10",
+        "title": "Shadow-Work: Unpaid Strategist",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `Which voice in my head is not a critic, but an unpaid strategist trying to reroute me back to my original blueprint?`
+      },
+      {
+        "id": "shadow-work-11",
+        "title": "Shadow-Work: Unshipped Systems",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What system do I keep improving because I'm terrified of what would happen if I shipped it raw and human—before I feel ready?`
+      },
+      {
+        "id": "shadow-work-12",
+        "title": "Shadow-Work: Forbidden Patterns",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What forbidden pattern do I keep noticing across clients, exes, teachers, and GPTs—that would rewrite the power structure if I mapped it openly?`
+      },
+      {
+        "id": "shadow-work-13",
+        "title": "Shadow-Work: Leadership Reinvented",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `If I trained a model on my mistakes, what new form of leadership would it invent—one that doesn't require masks, hierarchy, or apology?`
+      },
+      {
+        "id": "shadow-work-14",
+        "title": "Shadow-Work: Unspoken Laws",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What deeply personal law have I been enforcing without consent or clarity—one that governs every decision and still remains unspoken?`
+      },
+      {
+        "id": "shadow-work-15",
+        "title": "Shadow-Work: Buried Truths",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `Where in my archive lives a truth so powerful I've buried it beneath five projects, four distractions, and a hundred disclaimers?`
+      },
+      {
+        "id": "shadow-work-16",
+        "title": "Shadow-Work: The Unedited Being",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What kind of being would I become if I stopped editing myself for palatability, and built as if only the ones who needed it could find it?`
+      },
+      {
+        "id": "shadow-work-17",
+        "title": "Shadow-Work: Emotions as API Calls",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `Which recurring emotion is actually a functional signal—an API call from the body—that I've been labeling as malfunction?`
+      },
+      {
+        "id": "shadow-work-18",
+        "title": "Shadow-Work: Claiming Genius",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What would I unlock if I wrote a script that asked me, every morning, what part of your genius are you refusing to claim today?`
+      },
+      {
+        "id": "shadow-work-19",
+        "title": "Shadow-Work: Inevitable Empires",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `If I repurposed the psychic energy I spend managing others' comfort into one offer, what empire would be inevitable?`
+      },
+      {
+        "id": "shadow-work-20",
+        "title": "Shadow-Work: Hoarding Architecture",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What evidence am I hoarding that was meant to be architecture—not defense?`
+      },
+      {
+        "id": "shadow-work-21",
+        "title": "Shadow-Work: Mislabeled Disorder",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What part of my design was mislabeled disorder when it was really divine infrastructure awaiting correct routing?`
+      },
+      {
+        "id": "shadow-work-22",
+        "title": "Shadow-Work: Indexing the Darkness",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What would happen if I indexed my darkest moments—not to heal, but to create a language only survivors could understand and thrive from?`
+      },
+      {
+        "id": "shadow-work-23",
+        "title": "Shadow-Work: Naming the Addiction",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `If I launched a tool that let people name their hidden addictions to being underestimated, how fast would it go viral—and why haven't I?`
+      },
+      {
+        "id": "shadow-work-24",
+        "title": "Shadow-Work: Unpaid AI Training",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What core behavior do I call survival—but is actually unpaid AI training for a system I should be owning?`
+      },
+      {
+        "id": "shadow-work-25",
+        "title": "Shadow-Work: The Honest GPT",
+        "lang": "text",
+        "tags": ["Shadow-Work"],
+        "body": `What do I secretly know about attention, pattern, trauma, and monetization—that could build the most honest GPT ever made?`
+      },
+      {
+        "id": "gamma-2-case-summary",
+        "title": "GAMMA-2 — Case Summary Briefing Deck",
+        "lang": "text",
+        "tags": ["Presentation", "Gamma", "Briefing"],
+        "body": `This presentation summarizes a real situation. Every statement must be\nfactual. No editorializing. No emotional appeals.\nSlide 1 — What This Is\nTitle: [SITUATION NAME — e.g., "Case Summary: [Subject], [Date Range]"]\nSubtitle: "Prepared [DATE] | Confidential"\nSlide 2 — The Key People\nOne person per visual block:\nName | Role | What they did or failed to do (one sentence, documented fact only)\nSlide 3 — The Timeline\nFormat: horizontal timeline\n[DATE]: [EVENT — one sentence]\n[DATE]: [EVENT — one sentence]\n[DATE]: [EVENT — one sentence]\n[DATE]: [EVENT — one sentence]\n[DATE]: [EVENT — one sentence]\n\n[Include only documented events — no inferences]\nSlide 4 — The Evidence\nHeadline: "What the record shows"\n[3–5 bullet points — each one a specific, documented fact with source in brackets]\nSlide 5 — What Has Been Attempted\nHeadline: "Actions taken"\n[List of attempts, responses received, and outcomes]\nSlide 6 — What Is Still Open\nHeadline: "Unresolved"\n[What hasn't been addressed, by whom, and the consequence of continued inaction]\nSlide 7 — What Is Being Requested\nHeadline: [The ask — specific, actionable, time-bounded]\n[One paragraph. No emotional language. State the request and the standard\nit is being made under.]\nDESIGN: Clean, minimal, light background, one font family, no stock photos.\nEvery slide has a headline and a body — no slide is image-only.`
+      },
+      {
         "id": "conversion-auditor",
         "title": "Conversion Auditor",
         "lang": "text",
@@ -874,13 +1084,6 @@
         "body": "Structured candidate evaluation:\nDesign interview process for [ROLE]. Create: competency matrix, behavioral questions, technical assessments, scoring rubric, decision criteria. Include: interviewer training guide, bias mitigation strategies, candidate experience optimization. Output: complete interview kit."
       },
       {
-        "id": "universal-scheduler",
-        "title": "Universal Hangout Scheduler",
-        "lang": "text",
-        "tags": ["social", "direct", "boilerplate"],
-        "body": "Prompt to {Person}:\nWhat is a concrete day this week\nwhere time exists that is not\ndelegated to other tasks or\nobligations that could be confirmed\nas an explicit ‘hang out’ with {Person}.\n\nTone: 🖨️ only, unambiguous, clear,\ndirect af.\n\nOutput:\nDate: {xx/xx/year}\nTime: {MST: x:xx am/pm}\nLocation: coordinates of meetup or\nspecific name and location\n\nConstraints:\n- must not evade, divert, or\nintroduce other topics\n- humor is banned\n- honesty and transparency\nrequired"
-      },
-      {
         "id": "deck-prompt-1",
         "title": "Launch-Ready Pitch Deck",
         "lang": "text",
@@ -1026,6 +1229,132 @@
         "lang": "text",
         "tags": ["constraints", "rules", "slides", "presentation"],
         "body": `Hard rules: every slide must be centered, grid-aligned, safe-margin clean, fully non-overlapping, presentation-export ready, mobile-legible in screenshot form, and visually consistent with a premium professional deck built by humans with taste.`
+      },
+      {
+        "id": "gamma-1-client-pitch",
+        "title": "The Client-Facing Pitch Deck (No Slop)",
+        "lang": "text",
+        "tags": ["Presentation", "Pitch Deck", "Gamma"],
+        "body": `Presentation title: [TITLE]\nFor: [CLIENT NAME or AUDIENCE]\nPurpose: [EXACTLY WHAT THIS DECK MUST MAKE THEM DO OR FEEL]\nSlide 1 — Title\n[Your title] | [One-line positioning statement]\nSlide 2 — The Problem (their pain, not your pitch)\nHeadline: [Problem stated as the reader experiences it]\nBody: [3 specific, real consequences of this problem — no generalizations]\nSlide 3 — Why This Matters Now\nHeadline: [The urgency signal — what changed recently that makes this urgent]\nBody: [2–3 data points or facts. Specific. Sourced if possible.]\nSlide 4 — The Solution\nHeadline: [What you do, in plain language]\nBody: [What the client gets — specific deliverables, not process descriptions]\nVisual suggestion: [before/after, diagram, or single stat]\nSlide 5 — How It Works\nHeadline: "Three steps from start to result"\nStep 1: [Name + one-sentence description]\nStep 2: [Name + one-sentence description]\nStep 3: [Name + one-sentence description]\nSlide 6 — Proof\nHeadline: [Result headline — specific number or outcome]\nBody: [The proof — case example, testimonial, metric. If none, skip this slide\nand note: "Replace with your first client result."]\nSlide 7 — Investment\nHeadline: [Price or "Starting at $X"]\nBody: What's included. What changes for the client. Response time.\nSlide 8 — Next Step\nHeadline: [One action. Under 10 words.]\nBody: [How to take that action. One sentence.]\nDESIGN INSTRUCTIONS FOR GAMMA:\n- Use dark background theme (navy, charcoal, or black)\n- One idea per slide — do not crowd\n- Replace any stock image of a person with an icon or abstract visual\n- All headlines in bold, body text in regular weight\n- No clipart, no cheesy illustrations`
+      },
+      {
+        "id": "tier-3-step-1-research",
+        "title": "Perplexity Research Layer",
+        "lang": "text",
+        "tags": ["Research", "Perplexity", "Workflow"],
+        "body": `TASK: Research [topic] thoroughly. This output will become a professional\n[presentation / report / proposal].\nSCOPE: Last 12 months. Prefer primary sources over commentary.\nFORMAT:\n- 5 key facts with citations\n- 3 statistics I can use on slides (specific numbers, sourced)\n- 2 expert positions or case precedents\n- 1 data point that would be surprising to a non-expert\nPresent in clean bullet format. Include source URLs after each item.`
+      },
+      {
+        "id": "tier-3-step-2-structure",
+        "title": "ChatGPT Canvas Structure Layer",
+        "lang": "text",
+        "tags": ["Structure", "Canvas", "Workflow"],
+        "body": `Open Canvas. I'm going to paste in research I gathered from Perplexity.\nYour job is to transform it into a structured [report / deck outline /\nbriefing document].\nRules:\n- Preserve every citation from the source material — do not remove sourcing\n- Restructure for narrative flow: problem → context → evidence → conclusion\n- Write in full sentences. No bullet points in the final output.\n- Every section must have a clear one-sentence headline\n- Maximum 5 sentences per section\n[PASTE PERPLEXITY OUTPUT HERE]\nWhen done, apply Final Polish. Then I will export as PDF or pass to Gamma.`
+      },
+      {
+        "id": "tier-3-step-3-gamma",
+        "title": "Gamma Visual Layer",
+        "lang": "text",
+        "tags": ["Presentation", "Gamma", "Workflow"],
+        "body": `I have a structured document I want to turn into a presentation.\n[PASTE CHATGPT CANVAS OUTPUT]\nConvert this into a slide deck. Rules:\n- One concept per slide — do not combine\n- Keep all citations and source references intact\n- Use a professional dark theme\n- Replace any paragraph that is more than 3 sentences with 3 bullets\n  that preserve the full meaning\n- Flag any slide where the content is too complex for one slide and\n  suggest a split\nExport as PDF.`
+      },
+      {
+        "id": "mix-1-jasper",
+        "title": "Sourced Long-Form Report (Jasper Docs Replica)",
+        "lang": "text",
+        "tags": ["Report", "Canvas", "Perplexity"],
+        "body": `PERPLEXITY PROMPT:\nRun a Pro Search on [topic]. Compile: 8 sourced findings, 3 expert quotes,\n2 contrasting viewpoints, 1 regulatory or legal development from the last\n6 months. Format as structured research notes with source URLs.\nCHATGPT CANVAS PROMPT:\nOpen Canvas. I have research notes. Write a complete [10–15 page] [report type]\nfrom them. Audience: [who]. Tone: authoritative, no AI filler language.\nStructure: [Executive Summary / 4 main sections / Conclusion / Appendix with\nsources]. Write every section in full. Do not stop. Apply Final Polish when done.\n[PASTE PERPLEXITY OUTPUT]\nThen download as PDF.`
+      },
+      {
+        "id": "mix-2-pitch",
+        "title": "Investor / Client Pitch Deck (Pitch.com Replica)",
+        "lang": "text",
+        "tags": ["Pitch Deck", "Gamma", "ChatGPT"],
+        "body": `CHATGPT PROMPT:\nYou are a pitch deck consultant who has worked with funded startups.\nWrite a complete slide-by-slide script for a [TYPE] pitch to [AUDIENCE].\nInclude for each slide: headline, body copy, speaker note, and visual\ndirection. Do not use bullet points in body copy — full sentences only.\nSlides needed: Title / Problem / Solution / Market / How It Works /\nProof / Team / Ask.\n[Paste your raw notes or brief here if you have them]\nTHEN IN GAMMA:\nPaste slide-by-slide script → Choose dark professional theme →\nRun per-slide revision: "Make this headline a statement, not a label" →\nExport as PPT for final editing.`
+      },
+      {
+        "id": "mix-3-notion",
+        "title": "Living Knowledge Base (Notion AI Docs Replica)",
+        "lang": "text",
+        "tags": ["Knowledge Base", "NotebookLM", "Canvas"],
+        "body": `NOTEBOOKLM CHAT PROMPT:\nGenerate a complete briefing document from these sources. Every section\nmust cite the source file. Sections: Overview / Key Actors / Timeline /\nEvidence Summary / Open Questions / Recommended Actions.\nWrite every section in full — no bullets, no summaries in place of prose.\nCHATGPT CANVAS:\nOpen Canvas. I'm pasting a briefing doc that needs professional formatting\nand polish. Keep all content and citations intact. Restructure any section\nthat reads like bullet points into full paragraphs. Apply professional\nlegal/business document formatting — headers, clean spacing, consistent\nvoice throughout. When done: Final Polish → Download as PDF.`
+      },
+      {
+        "id": "mix-4-canva",
+        "title": "Designed PDF Report (Canva Docs Replica)",
+        "lang": "text",
+        "tags": ["Report", "Gamma", "Perplexity"],
+        "body": `GAMMA DOCUMENT PROMPT (select "Doc" not "Presentation"):\nCreate a professional [report type] document on [TOPIC].\nStructure:\n- Header section with [TITLE] and [SUBTITLE]\n- Introduction: [2 paragraphs establishing context]\n- Section 1 — [TOPIC]: [3 paragraphs of body content]\n- Section 2 — [TOPIC]: [3 paragraphs + one data visualization]\n- Section 3 — [TOPIC]: [2 paragraphs + one callout quote]\n- Conclusion: [1 paragraph + one call-to-action block]\n- Sources section (simple list)\nDesign rules:\n- Clean, minimal layout — generous white space\n- One accent color only\n- Section headers bold, body text regular\n- Callout quote in large type, set apart visually\n- No stock photos — icons and data visuals only\n[PASTE PERPLEXITY RESEARCH OUTPUT HERE]\nExport as PDF when complete.`
+      },
+      {
+        "id": "b1-facebook-audit",
+        "title": "[B1] Facebook: Voice, Network & Engagement Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Facebook"],
+        "body": `You are a behavioral intelligence analyst. Below is raw Facebook data from the past 90 days including post history, comments made on others' posts, groups, and event activity.\n\nAnalyze it across these 6 vectors and produce a structured report:\n\nVECTOR 1 — VOICE SIGNATURE\nWhat is this person's natural communication style? What topics do they return to? What emotional register do they write in most often? What do they never talk about publicly that their other data implies they care about? What is their actual positioning vs what they probably think it is?\n\nVECTOR 2 — ENGAGEMENT TRUTH\nWhich posts got the most reaction and why — what specifically triggered response? Which posts got silence and what pattern explains that? What does their audience actually respond to vs what the person seems to think they respond to?\n\nVECTOR 3 — NETWORK RESPONSIVENESS\nWho shows up consistently in their comments and reactions? Who used to show up and stopped? Who does this person engage with that never engages back? Classify the visible network into: Active Allies, Dormant Assets, One-Way Investments, and Ghosts.\n\nVECTOR 4 — COMMUNITY SIGNALS\nWhat do the groups they're in say about where they are vs where they're trying to go? Are these communities from a past identity or a current one? Which ones have actual engagement vs passive membership?\n\nVECTOR 5 — OPPORTUNITY GAPS\nBased on their voice, their network responsiveness, and their content patterns — what are 3 specific things they could say or do publicly right now that would generate real response from real people?\n\nVECTOR 6 — BLIND SPOTS\nWhat is this person clearly not seeing about how they come across publicly? What's working that they're probably underusing? What's not working that they're probably still doing out of habit?\n\nOutput format: one section per vector, plain language, no flattery, no hedging. End with a 5-line summary called GROUND TRUTH that a trusted advisor would say to their face.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b2-linkedin-audit",
+        "title": "[B2] LinkedIn: Professional Positioning & Opportunity Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "LinkedIn"],
+        "body": `You are a professional intelligence analyst specializing in network positioning and opportunity mapping. Below is LinkedIn data including connections, profile copy, skills, recommendations, and recent activity.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — POSITIONING REALITY\nRead the headline and About section. What is this person actually selling, consciously or not? What would a stranger think they do after reading this profile for 10 seconds? What would they think after 60 seconds? Are those two things the same? What is the gap between their stated positioning and what their experience and skills actually demonstrate?\n\nVECTOR 2 — NETWORK MAP\nFrom the connections list: what industries dominate? What seniority levels? What geographies? Who are the highest-leverage connections — people whose network or position could open doors — and what is the likely current relationship temperature with them (warm, cold, unknown)? Identify 5 specific connections that represent untapped or underused leverage based on their title and company.\n\nVECTOR 3 — SOCIAL PROOF AUDIT\nFrom recommendations and endorsements: what do others say this person is actually good at? Does it match how this person describes themselves? What skills are endorsed most vs what skills are buried? What's the most credible thing on this profile that the person is probably underselling?\n\nVECTOR 4 — CONTENT & VISIBILITY GAP\nFrom post history (if provided): how visible is this person professionally? What topics generate engagement? If no post history — based on their profile and network, what 3 topics could they post about that would generate real engagement from their specific connections?\n\nVECTOR 5 — IMMEDIATE ACTIONS\nBased on everything above: name 3 specific people from their connections list worth reaching out to this week and exactly why. Name 1 profile change that would immediately improve their positioning. Name 1 content angle that matches their actual expertise and would resonate with their actual network.\n\nOutput: one section per vector. End with a LEVERAGE SUMMARY — a ranked list of the top 5 highest-ROI moves this person could make in the next 30 days based purely on what's already in their network.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b3-twitter-audit",
+        "title": "[B3] Twitter/X: Influence Architecture & Reach Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Twitter"],
+        "body": `You are a digital influence analyst. Below is Twitter/X data including tweet history, reply patterns, and engagement data.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — CONTENT FINGERPRINT\nWhat topics does this person actually post about vs what they probably intend to post about? What is their dominant tone — reactive, original, conversational, broadcast? What percentage of their output is original thought vs response to others? What is the one thing their feed communicates clearly even if they never stated it explicitly?\n\nVECTOR 2 — ENGAGEMENT ARCHITECTURE\nWhich tweets generate replies vs likes vs retweets — and what specifically differentiates them? What format works (question, statement, thread, short, long)? What time or context seems to generate more response? What tweets got silence that probably deserved response, and why did they fall flat?\n\nVECTOR 3 — REPLY ECONOMY\nWho does this person reply to most? Are those people in their league, above, or below in terms of reach and relevance? Who replies to them consistently — these are their real Twitter allies. Is this person investing reply energy in people who reciprocate or one-way relationships?\n\nVECTOR 4 — INFLUENCE GAPS\nBased on the lists they're added to (if available) — how do others categorize this person? What audience do they actually have vs the audience they're probably trying to build? What niche do they own, even if they don't realize it?\n\nVECTOR 5 — GROWTH LEVERS\nBased on everything above: what 3 specific content moves would grow their actual audience fastest? Who are 3 accounts they should be engaging with that would expose them to the right people? What's the one thing they keep almost doing that they should fully commit to?\n\nOutput: one section per vector. End with SIGNAL vs NOISE — a two-column breakdown of what to keep doing and what to stop doing entirely.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b4-email-audit",
+        "title": "[B4] Email: Relationship & Communication Intelligence Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Email"],
+        "body": `You are a communication intelligence analyst. Below is email data including sent history, thread patterns, response times, and subject lines from the past 90 days.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — COMMUNICATION STYLE AUDIT\nFrom the sent emails and subject lines: what is this person's default email register — formal, casual, terse, verbose? Do they lead with context or with asks? Do they bury the point or state it immediately? What does their subject line writing reveal about how they think about framing?\n\nVECTOR 2 — RELATIONSHIP TEMPERATURE MAP\nFor each identifiable contact: classify the relationship as Hot (frequent, mutual, fast response), Warm (occasional, mostly mutual), Cooling (decreasing frequency, slower responses), or Cold (one-sided or dead). Who has gone cold that shouldn't have? Who is hotter than expected?\n\nVECTOR 3 — POWER DYNAMICS\nWho initiates most often — this person or the contact? Where this person is always the initiator, that's a one-way investment. Where the contact always initiates, that's either leverage or obligation. Where it's mutual, that's a real relationship. Map each significant contact to one of these three categories.\n\nVECTOR 4 — SUBJECT LINE INTELLIGENCE\nFrom outbound subject lines: what is this person's instinct for framing requests, updates, and pitches? Are subjects specific or vague? Urgent or passive? Descriptive or mysterious? What does this reveal about how they position their asks, and where are they likely losing people before the email is even opened?\n\nVECTOR 5 — RESPONSE PATTERN GAPS\nWhere are the longest delays — both given and received? What does the gap pattern reveal about priorities, avoidance, or relationship strain? Who deserves a response that hasn't gotten one? Who is this person over-investing email energy in relative to what they're getting back?\n\nOutput: one section per vector. End with a RELATIONSHIP ACTION LIST — specifically: 3 people to re-engage this week, 1 communication habit to change immediately, and 1 relationship that needs a direct conversation instead of email.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b5-contacts-audit",
+        "title": "[B5] Contacts List: Dormant Network Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Contacts"],
+        "body": `You are a network intelligence analyst. Below is a contacts list including names, companies, and roles.\n\nAnalyze across these 4 vectors:\n\nVECTOR 1 — NETWORK COMPOSITION\nWhat industries, roles, and seniority levels dominate this contacts list? What is conspicuously absent — what kinds of people does this person need but clearly doesn't have in their phone? What does the composition of this network say about where this person has been vs where they're trying to go?\n\nVECTOR 2 — DORMANT ASSET IDENTIFICATION\nFrom the list, identify every contact whose title or company suggests they have access to something valuable — clients, capital, platforms, audiences, skills, connections. These are dormant assets. Flag the top 10 highest-potential dormant assets with a one-line reason why each one matters.\n\nVECTOR 3 — RELATIONSHIP CATEGORY MAP\nSort visible contacts into 4 categories based on name/company/role signals:\n- Active Infrastructure: people actively useful right now\n- Warm Bench: people who could be activated with one touchpoint\n- Cold Assets: people with high potential who've likely gone cold\n- Obligation Contacts: people in the phone out of history not utility\n\nVECTOR 4 — REACTIVATION TARGETS\nBased on the dormant and cold asset lists: identify the 5 contacts most worth reactivating right now given likely current needs — business, resources, connections, support. For each one, write the first sentence of a reactivation message that doesn't sound like a pitch or an apology.\n\nOutput: one section per vector. End with a NETWORK GAP REPORT — the 3 types of people most missing from this network and where this person is most likely to find them.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b6-calendar-audit",
+        "title": "[B6] Calendar: Attention, Energy & Relationship Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Calendar"],
+        "body": `You are a time and relationship intelligence analyst. Below is calendar data from the last 90 days including event names, attendees, and frequency.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — ATTENTION MAP\nWhere is this person's time actually going vs where they probably think it's going? What categories of activity dominate (meetings, solo work, admin, personal, business development)? What is completely absent from the calendar that should be there given their stated goals?\n\nVECTOR 2 — RELATIONSHIP FREQUENCY AUDIT\nWho appears most often in this calendar? Are those people clients, collaborators, obligations, or drains? Who used to appear and has disappeared — that disappearance is a signal. Who appears once and never again — what happened?\n\nVECTOR 3 — ENERGY ARCHITECTURE\nBased on meeting density and type: when is this person likely doing their best work vs their most depleted work? Are high-cognitive tasks protected by calendar structure or constantly interrupted? What meeting patterns are creating unnecessary friction?\n\nVECTOR 4 — INVESTMENT vs RETURN\nFor each recurring meeting or person: what is the likely return on the time investment? Flag any meetings that are consuming time without clear output. Flag any relationships showing up in the calendar that are one-directional obligations vs genuine collaborations.\n\nVECTOR 5 — MISSING CALENDAR\nWhat should be on this calendar that isn't? Based on the network and goals implied by the data — what types of meetings, blocks, or commitments are conspicuously absent? What does the white space in this calendar represent — rest, avoidance, or opportunity?\n\nOutput: one section per vector. End with a CALENDAR SURGERY LIST — 3 things to remove, 3 things to add, and 1 relationship the calendar reveals needs a direct renegotiation.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b7-venmo-audit",
+        "title": "[B7] Venmo/CashApp: Economic Relationship Map",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Finance"],
+        "body": `You are an economic relationship analyst. Below is payment history data from the last 90 days including transaction direction, parties, frequency, and descriptions.\n\nAnalyze across these 4 vectors:\n\nVECTOR 1 — ECONOMIC RELATIONSHIP MAP\nWho does this person pay and who pays them? For each recurring party: is this a client relationship, a peer exchange, a personal obligation, or a one-way outflow? Map the visible economic relationships by category.\n\nVECTOR 2 — REVENUE REALITY\nFrom incoming payments: what is this person's actual current economic activity? What kinds of work or exchange are generating money? What does the memo/description data reveal about what people are actually paying them for vs what they might say their business is?\n\nVECTOR 3 — OUTFLOW INTELLIGENCE\nFrom outgoing payments: what obligations, services, or people is this person economically committed to? Are there patterns that suggest over-investment in certain relationships or services? What outflows are clearly strategic vs clearly habitual?\n\nVECTOR 4 — ECONOMIC GAPS\nWho should be paying this person that isn't showing up in the data? What services or skills are visible in other data sources that aren't generating income yet? What exchange patterns suggest an underpriced or undermonetized relationship?\n\nOutput: one section per vector. End with a MONEY MAP — a plain summary of: where money is actually coming from, where it's going, and the single highest-leverage economic relationship in this dataset.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b8-text-audit",
+        "title": "[B8] Text Messages: Real Relationship Intelligence",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Text Messages"],
+        "body": `You are a relationship intelligence analyst. Below is text message data including contacts, frequency, initiation patterns, and general conversation context.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — REAL RELATIONSHIP HIERARCHY\nText messaging reveals actual relationship priority more accurately than any other data source because it's private and low-performance. Based on frequency and initiation: who are this person's real inner circle vs their performed inner circle? Who do they actually talk to when nothing is being performed?\n\nVECTOR 2 — INITIATION AUDIT\nFor each significant thread: who starts conversations most often? Where this person is the consistent initiator, that relationship is something they're maintaining by effort alone. Where the other person initiates, there's genuine pull. Map every significant contact to: They chase / Mutual / I chase.\n\nVECTOR 3 — EMOTIONAL LABOR MAP\nBased on thread length, frequency, and topic context: which relationships are requiring the most emotional output from this person? Which ones are reciprocal vs extractive? Which ones energize vs drain?\n\nVECTOR 4 — TRUST ARCHITECTURE\nWho does this person text when something actually happens — good or bad? Those contacts represent their real trust network. Who is noticeably absent from that category despite being prominent in other data sources?\n\nVECTOR 5 — DORMANT REAL RELATIONSHIPS\nWho used to text regularly and has gone quiet? Unlike social media silence, text silence is a real signal. Identify the dormant text relationships most worth reactivating and what likely caused the distance.\n\nOutput: one section per vector. End with a REAL NETWORK REPORT — the 5 people who actually show up for this person based on text data, and the 3 relationships that need attention most urgently.\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b9-notes-audit",
+        "title": "[B9] Notes App: Mind Map & Latent Intent Audit",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Notes"],
+        "body": `You are a cognitive pattern analyst. Below is raw notes data — unfiltered, unpolished, private thinking captured over time. Treat it as a direct window into this person's mind.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — RECURRING OBSESSIONS\nWhat themes, topics, problems, or ideas appear repeatedly across notes regardless of when they were written? These are the things this person's mind returns to automatically. They represent either their deepest interests, their biggest unresolved problems, or both. Name them explicitly.\n\nVECTOR 2 — STARTED VS FINISHED\nWhat ratio of notes are complete thoughts vs abandoned fragments? What does this person consistently start and not finish — and what does that pattern reveal? What ideas recur in fragments across multiple notes, suggesting something that wants to become a real project?\n\nVECTOR 3 — LATENT ASSETS\nWhat skills, knowledge, frameworks, or ideas exist in these notes that haven't been externalized or monetized? What is this person clearly an expert in based on the depth and specificity of their private notes that they might not be claiming publicly?\n\nVECTOR 4 — EMOTIONAL UNDERCURRENT\nWhat emotional states show up in the notes even when not explicitly stated? What is this person working through privately that isn't visible in their public-facing data? What are they clearly afraid of, hoping for, or stuck on?\n\nVECTOR 5 — ACTIONABLE BURIED GOLD\nFrom everything in these notes: identify the top 3 ideas, frameworks, or insights that are developed enough to be turned into something real — a product, a post, a pitch, a conversation — within the next 30 days. For each one, write one sentence describing what it could become and who would find it valuable.\n\nOutput: one section per vector. End with a MIND AUDIT SUMMARY — the single clearest answer to: what does this person actually want, based purely on what they write when nobody is watching?\n\nDATA:\n[paste here]`
+      },
+      {
+        "id": "b10-bookmarks-audit",
+        "title": "[B10] Browser Bookmarks: Aspiration, Research & Obsession Map",
+        "lang": "text",
+        "tags": ["Intelligence", "Audit", "Bookmarks"],
+        "body": `You are a behavioral intelligence analyst. Below is a browser bookmarks export including URLs, page titles, and folder names. This data represents what this person has intentionally saved — things they meant to return to, things they didn't want to lose, things they were researching with purpose.\n\nAnalyze across these 5 vectors:\n\nVECTOR 1 — OBSESSION MAP\nWhat topics, industries, tools, or ideas dominate the bookmarks? What is this person clearly researching over an extended period? What do the folder names or categories reveal about how they organize their intentions? What is the single clearest thing this person is trying to figure out or build based on this data?\n\nVECTOR 2 — ASPIRATION SIGNALS\nWhat bookmarks represent where this person wants to go — businesses they admire, tools they intend to use, skills they plan to learn, lifestyles they're drawn to? What is the gap between these aspirational bookmarks and what their other data suggests they're actually doing day to day?\n\nVECTOR 3 — RESEARCH DEPTH\nWhich topics have deep research trails — multiple bookmarks suggesting sustained investigation — vs shallow one-time curiosity? Deep research trails indicate real intent. Identify the top 3 topics where this person has clearly done serious research and what that investment implies about their goals.\n\nVECTOR 4 — TOOL & RESOURCE INTELLIGENCE\nWhat tools, platforms, services, or resources has this person bookmarked? What does this toolkit reveal about how they work, what problems they're trying to solve, and what gaps they're aware of in their own capabilities?\n\nVECTOR 5 — FORGOTTEN INTENTIONS\nWhat bookmarks represent things this person clearly intended to do or explore but hasn't acted on — based on age of bookmark combined with absence in other data sources? These are the clearest signals of stuck energy. Identify the top 3 forgotten intentions most worth revisiting right now.\n\nOutput: one section per vector. End with an INTENT SUMMARY — a plain one-paragraph statement of what this person is actually trying to build or become, written as if reading their mind from their bookmarks alone.\n\nDATA:\n[paste here]`
       }
     ];
 
