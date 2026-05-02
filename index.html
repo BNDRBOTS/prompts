@@ -30,7 +30,8 @@
         radial-gradient(1100px 600px at 18% -10%, rgba(255,255,255,.06), transparent 60%),
         radial-gradient(900px 600px at 85% 0%, rgba(255,255,255,.04), transparent 60%),
         var(--bg);
-      padding: 28px 16px 60px;
+      /* Increased bottom padding to 100px so content easily clears the 60px fixed footer */
+      padding: 28px 16px 100px;
     }
 
     .bg-noise {
@@ -77,17 +78,6 @@
       display: flex;
       align-items: flex-end;
       gap: 14px;
-    }
-
-    .scrollpct {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted2);
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: rgba(255,255,255,.02);
-      user-select: none;
     }
 
     .controls { display: flex; gap: 10px; align-items: center; }
@@ -239,23 +229,6 @@
     pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
     pre::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
 
-    .legal-footer {
-      max-width: 1040px;
-      margin: 40px auto 0;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-    .legal-footer a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
     /* Desktop Hover States Encapsulated */
     @media (hover: hover) {
       .btn:hover { background: rgba(255,255,255,.04); color: rgba(255,255,255,.86); }
@@ -266,7 +239,6 @@
         border-color: rgba(255,255,255,.12);
         background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       }
-      .legal-footer a:hover { color: var(--text); }
     }
 
     /* Remove interactive cursors on touch devices strictly */
@@ -277,8 +249,8 @@
     /* Mobile First Adjustments */
     @media (max-width: 720px) {
       body {
-        /* Respect safe areas for notches and bottom bars */
-        padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(80px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+        /* Mobile padded bottom significantly to clear stacked footer */
+        padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 180px max(16px, env(safe-area-inset-left));
       }
       .topbar { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
       .brand__title { font-size: 32px; }
@@ -288,8 +260,8 @@
       .input { 
         flex-grow: 1; 
         width: auto; 
-        font-size: 16px; /* Prevents auto-zoom on iOS Safari */
-        min-height: 44px; /* HIG minimum touch target */
+        font-size: 16px; 
+        min-height: 44px; 
         padding: 12px 16px;
       }
       
@@ -317,13 +289,65 @@
         padding: 10px 14px; 
       }
       .copy span { display: none; }
-      
-      .legal-footer a {
-        min-height: 44px;
-        padding: 0 12px;
-        display: inline-flex;
-        align-items: center;
-      }
+    }
+
+    /* Fixed Dark Footer exactly matching user specifications */
+    .bndr-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      min-height: 60px; /* ~1 inch tall */
+      background: #000000;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-family: var(--mono);
+      z-index: 9999;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.8);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .bndr-footer__left, .bndr-footer__center-left, .bndr-footer__socials, .bndr-footer__actions {
+      display: flex;
+    }
+
+    .bndr-footer__left { flex-direction: column; gap: 4px; }
+    .bndr-clock { font-weight: 700; font-size: 14px; letter-spacing: 1px; color: #fff;}
+    .bndr-copyright { color: #666666; font-size: 10px; }
+
+    .bndr-footer__center-left { flex-direction: column; gap: 4px; margin-left: -2vw; }
+    .bndr-links { display: flex; gap: 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+    .bndr-links a { color: #888888; text-decoration: none; transition: color 0.15s ease; }
+    .bndr-links a:hover { color: #ffffff; }
+    .bndr-email { color: #666666; font-size: 11px; letter-spacing: 0.5px; }
+
+    .bndr-footer__socials { gap: 14px; align-items: center; }
+    .bndr-social-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.15s ease; }
+    .bndr-social-icon:hover { opacity: 1; }
+    .bndr-social-icon svg { width: 100%; height: 100%; }
+
+    .bndr-footer__actions { gap: 12px; }
+    .bndr-action-btn {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .bndr-action-btn:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
+
+    @media (max-width: 900px) {
+      .bndr-footer { height: auto; padding: 16px; gap: 16px; justify-content: center; text-align: center; }
+      .bndr-footer__left, .bndr-footer__center-left { align-items: center; margin-left: 0; }
     }
   </style>
 </head>
@@ -341,8 +365,6 @@
     </div>
 
     <div class="topbar__right">
-      <div class="scrollpct" id="scrollPct">00%</div>
-
       <div class="controls">
         <input id="q" class="input" type="search" placeholder="Search prompts…" autocomplete="off" />
         <button id="clear" class="btn" type="button" title="Clear">Clear</button>
@@ -357,9 +379,63 @@
     <section id="grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <footer class="legal-footer">
-    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=iakils4n&raw=1" target="_blank" rel="noopener noreferrer">Privacy</a>
-    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=28ft9zz3&raw=1" target="_blank" rel="noopener noreferrer">Terms</a>
+  <footer class="bndr-footer">
+    <div class="bndr-footer__left">
+      <span class="bndr-clock" id="live-clock">00:00:00</span>
+      <span class="bndr-copyright">© 2026 BNDR LLC</span>
+    </div>
+
+    <div class="bndr-footer__center-left">
+      <div class="bndr-links">
+        <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=iakils4n&raw=1" target="_blank" rel="noopener noreferrer">PRIVACY</a>
+        <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=28ft9zz3&raw=1" target="_blank" rel="noopener noreferrer">TERMS</a>
+      </div>
+      <span class="bndr-email">BNDR.LABS@GMAIL.COM</span>
+    </div>
+
+    <div class="bndr-footer__socials">
+      <!-- LinkedIn -->
+      <a href="#" class="bndr-social-icon" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      </a>
+      <!-- Substack -->
+      <a href="#" class="bndr-social-icon" aria-label="Substack">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+      </a>
+      <!-- GitHub -->
+      <a href="#" class="bndr-social-icon" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+      <!-- Instagram -->
+      <a href="#" class="bndr-social-icon" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+      </a>
+      <!-- Facebook -->
+      <a href="#" class="bndr-social-icon" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+      <!-- Buy Me a Coffee -->
+      <a href="#" class="bndr-social-icon" aria-label="Buy Me a Coffee">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M20.216 10.222c-.104-.694-.654-1.22-1.353-1.303l-1.91-.225c-.218-1.57-.463-3.69-.533-5.068-.042-.806-.715-1.427-1.523-1.427H4.407c-.808 0-1.48.621-1.523 1.427-.07 1.378-.315 3.498-.533 5.068l-1.91.225c-.7.083-1.25.61-1.353 1.303-.133.882-.236 1.855-.236 2.87 0 5.334 3.96 9.712 9.155 10.428 1.41.194 2.853.194 4.263 0 5.195-.716 9.155-5.094 9.155-10.428 0-1.015-.103-1.988-.236-2.87zm-4.782-4.997c.05 1.05.21 2.65.378 4.053l-10.602 1.25c.168-1.403.328-3.003.378-4.053h9.846zm-2.07 14.156c-1.31.18-2.66.18-3.97 0-4.095-.563-7.227-3.99-7.227-8.156 0-.66.06-1.307.16-1.928l11.053-1.304c.1.62.16 1.268.16 1.928 0 4.166-3.132 7.593-7.227 8.156zm6.398-9.066c-.053.35-.118.694-.194 1.03l-1.874.22c.076-.336.14-.68.193-1.03l1.875-.22z"/></svg>
+      </a>
+      <!-- Patreon -->
+      <a href="#" class="bndr-social-icon" aria-label="Patreon">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M22.957 7.21c-.004-3.064-2.391-5.576-5.191-6.482-3.478-1.125-8.064-.962-11.384.604C2.357 3.231 1.093 7.391 1.046 11.54c-.039 3.411 1.304 7.306 4.365 9.152 2.923 1.764 7.29 2.08 10.457 1.094 3.738-1.163 7.108-4.321 7.089-8.544V7.21h.01zm-7.661 8.877c-3.15 1.541-7.854 1.233-10.432-.693-2.697-2.016-3.036-6.197-2.348-9.288C3.593 1.291 10.366-1.16 14.935 1.547c3.15 1.868 4.09 6.22 2.656 9.38-1.01 2.228-2.522 3.193-5.12 3.518h-.002z"/></svg>
+      </a>
+      <!-- Lightning -->
+      <a href="#" class="bndr-social-icon" aria-label="Lightning">
+        <svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M11.5 0L1 14h8l-2.5 10L19 10h-7.5L14 0h-2.5z"/></svg>
+      </a>
+    </div>
+
+    <div class="bndr-footer__actions">
+      <a href="tel:#" class="bndr-action-btn">CALL DIRECT</a>
+      <a href="#" class="bndr-action-btn">START BUILD</a>
+    </div>
   </footer>
 
   <script>
@@ -1440,7 +1516,7 @@
         "title": "FCC Formal Complaint: The Difference Between \"Tell Your Story\" and Actually Getting Served",
         "lang": "text",
         "tags": ["Legal", "Telecom", "FCC"],
-        "body": `I have an unresolved billing or service dispute with my \ntelecom provider [COMPANY] and want to file an FCC formal \ncomplaint — not the \"Tell Your Story\" informal submission, \nwhich is not served on the provider.\n\n1. Walk me through filing at consumercomplaints.fcc.gov \n   in the correct complaint category that matches my issue: \n   [TV / Phone / Internet / Wireless].\n\n2. Draft my complaint narrative. It must be:\n   - Specific: dates, amounts, account numbers, rep names\n   - Tied to a factual violation: billing error, service \n     not delivered as contracted, or misrepresentation\n   - Free of vague language — the FCC forwards this verbatim\n   - Concise enough for the summary field\n\n3. What happens after submission:\n   - The FCC serves it on the provider\n   - The provider's 30-day mandatory response obligation\n   - What a substantive vs. a dismissive response looks like\n   - My option to escalate if the response is inadequate\n\n4. Should I simultaneously file with my state's Public \n   Utilities Commission or Attorney General's office? \n   If yes, draft that parallel complaint.\n\nProvider: [X] | Issue: [X] | Amount disputed: [$X] | \nDuration unresolved: [X months]`
+        "body": `I have an unresolved billing or service dispute with my \ntelecom provider [COMPANY] and want to file an FCC formal \ncomplaint — not the "Tell Your Story" informal submission, \nwhich is not served on the provider.\n\n1. Walk me through filing at consumercomplaints.fcc.gov \n   in the correct complaint category that matches my issue: \n   [TV / Phone / Internet / Wireless].\n\n2. Draft my complaint narrative. It must be:\n   - Specific: dates, amounts, account numbers, rep names\n   - Tied to a factual violation: billing error, service \n     not delivered as contracted, or misrepresentation\n   - Free of vague language — the FCC forwards this verbatim\n   - Concise enough for the summary field\n\n3. What happens after submission:\n   - The FCC serves it on the provider\n   - The provider's 30-day mandatory response obligation\n   - What a substantive vs. a dismissive response looks like\n   - My option to escalate if the response is inadequate\n\n4. Should I simultaneously file with my state's Public \n   Utilities Commission or Attorney General's office? \n   If yes, draft that parallel complaint.\n\nProvider: [X] | Issue: [X] | Amount disputed: [$X] | \nDuration unresolved: [X months]`
       },
       {
         "id": "home-depot-truck-rental-non-construction",
@@ -1454,7 +1530,7 @@
         "title": "Your Public Library Lends Objects, Not Just Books",
         "lang": "text",
         "tags": ["Resource", "Cognitive Unlock", "Library"],
-        "body": `I need [ITEM] for a one-time or occasional use and I don't \nwant to buy or rent it. I want to check my library system \nbefore spending anything.\n\n1. What specific search terms should I use on my library \n   system's website to find their \"Library of Things,\" \n   \"Tool Library,\" or equivalent lending program? \n   [My library system: CITY/COUNTY]\n\n2. If their catalog isn't searchable online, give me a \n   short phone/chat script to ask the librarian about \n   non-book lending inventory.\n\n3. For the item I need: [ITEM], what are the realistic \n   alternatives in my area if the library doesn't have it? \n   Order by cost: library → tool lending co-op → peer rental \n   app (Fat Llama, etc.) → big-box tool rental → purchase.\n\n4. Are there any restrictions on commercial use of library-\n   lent items I need to know before I proceed?\n\n5. What other items should I check my library for that \n   I would never think to look there for, given that \n   I regularly spend money on [MY COMMON PURCHASES/TASKS]?\n\nLibrary system: [CITY/COUNTY] | Item needed: [X] | \nUse case: [ONE-TIME / OCCASIONAL] | Spend I'm avoiding: [$X]`
+        "body": `I need [ITEM] for a one-time or occasional use and I don't \nwant to buy or rent it. I want to check my library system \nbefore spending anything.\n\n1. What specific search terms should I use on my library \n   system's website to find their "Library of Things," \n   "Tool Library," or equivalent lending program? \n   [My library system: CITY/COUNTY]\n\n2. If their catalog isn't searchable online, give me a \n   short phone/chat script to ask the librarian about \n   non-book lending inventory.\n\n3. For the item I need: [ITEM], what are the realistic \n   alternatives in my area if the library doesn't have it? \n   Order by cost: library → tool lending co-op → peer rental \n   app (Fat Llama, etc.) → big-box tool rental → purchase.\n\n4. Are there any restrictions on commercial use of library-\n   lent items I need to know before I proceed?\n\n5. What other items should I check my library for that \n   I would never think to look there for, given that \n   I regularly spend money on [MY COMMON PURCHASES/TASKS]?\n\nLibrary system: [CITY/COUNTY] | Item needed: [X] | \nUse case: [ONE-TIME / OCCASIONAL] | Spend I'm avoiding: [$X]`
       },
       {
         "id": "zero-percent-balance-transfer-float-hysa",
@@ -1531,7 +1607,7 @@
         "title": "Zillow Search Band + Coming Soon Accumulator",
         "lang": "text",
         "tags": ["Real Estate", "Seller", "Zillow"],
-        "body": `I am listing my home at approximately $[TARGET_PRICE] in [ZIP].\n\n1. Search Band Analysis: Given my target price, identify which \n   $25k search band brackets I fall into and give me the exact \n   listing price that captures the maximum buyers across two \n   adjacent bands without pricing below my floor.\n\n2. Coming Soon Phase Plan (max 21 days): Build a daily action \n   checklist to accumulate Zillow saves before going active. \n   What to post, where, and how often. Target: 30+ saves before \n   Day 1 active.\n\n3. Launch Day: What day of the week and time maximizes \n   first-48-hour visibility? What dates to avoid?\n\n4. Multiple Offer Trigger: At what save count do I set a \n   \"highest and best\" deadline?\n\nMy home: [beds | sqft | neighborhood | condition]`
+        "body": `I am listing my home at approximately $[TARGET_PRICE] in [ZIP].\n\n1. Search Band Analysis: Given my target price, identify which \n   $25k search band brackets I fall into and give me the exact \n   listing price that captures the maximum buyers across two \n   adjacent bands without pricing below my floor.\n\n2. Coming Soon Phase Plan (max 21 days): Build a daily action \n   checklist to accumulate Zillow saves before going active. \n   What to post, where, and how often. Target: 30+ saves before \n   Day 1 active.\n\n3. Launch Day: What day of the week and time maximizes \n   first-48-hour visibility? What dates to avoid?\n\n4. Multiple Offer Trigger: At what save count do I set a \n   "highest and best" deadline?\n\nMy home: [beds | sqft | neighborhood | condition]`
       },
       {
         "id": "charity-care-501r-application-escalation",
@@ -1615,7 +1691,7 @@
         "title": "Storage Unit Price Drop Leverage Script",
         "lang": "text",
         "tags": ["Consumer", "Negotiation", "Storage"],
-        "body": `I rent a storage unit and want to negotiate my rate down \nwithout leaving, using documented industry pricing behavior.\n\n1. My unit: [COMPANY | SIZE | CURRENT MONTHLY RATE | \n   HOW LONG I'VE BEEN A TENANT]\n\n   Check the same company's current online rate for \n   a new customer for the same unit size at my location. \n   What is the gap between my rate and the new-customer \n   promotional rate?\n\n2. Draft my negotiation call script. It must:\n   - Reference the current new-customer online price \n     specifically by dollar amount\n   - State I've been a loyal tenant for [X months/years]\n   - Request a rate match or rate reduction — not a \n     \"review\"\n   - Include a soft move-out signal if they decline:\n     \"I'd prefer to stay but I'll need to evaluate \n     my options if we can't get closer to current market rate\"\n\n3. What is the escalation path if the front desk \n   declines: district manager contact protocol, \n   and how to find that contact.\n\n4. If they don't budge: model the real cost of \n   moving to a competitor with a move-in special \n   (first month free or 50% off) vs. staying at \n   my current rate. Show the 12-month dollar comparison.\n\n5. When is the optimal time in the month to make \n   this call to maximize their incentive to retain me \n   rather than lose a billing cycle?\n\nCompany: [X] | Unit size: [X] | \nMonthly rate: [$X] | Tenure: [X months]`
+        "body": `I rent a storage unit and want to negotiate my rate down \nwithout leaving, using documented industry pricing behavior.\n\n1. My unit: [COMPANY | SIZE | CURRENT MONTHLY RATE | \n   HOW LONG I'VE BEEN A TENANT]\n\n   Check the same company's current online rate for \n   a new customer for the same unit size at my location. \n   What is the gap between my rate and the new-customer \n   promotional rate?\n\n2. Draft my negotiation call script. It must:\n   - Reference the current new-customer online price \n     specifically by dollar amount\n   - State I've been a loyal tenant for [X months/years]\n   - Request a rate match or rate reduction — not a \n     "review"\n   - Include a soft move-out signal if they decline:\n     "I'd prefer to stay but I'll need to evaluate \n     my options if we can't get closer to current market rate"\n\n3. What is the escalation path if the front desk \n   declines: district manager contact protocol, \n   and how to find that contact.\n\n4. If they don't budge: model the real cost of \n   moving to a competitor with a move-in special \n   (first month free or 50% off) vs. staying at \n   my current rate. Show the 12-month dollar comparison.\n\n5. When is the optimal time in the month to make \n   this call to maximize their incentive to retain me \n   rather than lose a billing cycle?\n\nCompany: [X] | Unit size: [X] | \nMonthly rate: [$X] | Tenure: [X months]`
       },
       {
         "id": "manufacturer-patient-assistance-program-finder",
@@ -1629,7 +1705,7 @@
         "title": "Binding Arbitration Opt-Out Window",
         "lang": "text",
         "tags": ["Legal", "Consumer", "Arbitration"],
-        "body": `I want to identify which of my current service contracts \nallow me to opt out of mandatory arbitration clauses — \nand do so before the window closes.\n\n1. I have accounts/contracts with: [LIST COMPANIES — \n   credit cards, telecom, streaming, apps, banks, \n   insurance, etc.]\n\n   For each company, research:\n   - Do they have a mandatory arbitration clause?\n   - Do they offer an opt-out window? (Typically 30–60 days \n     from account opening or from when a new terms \n     update is issued)\n   - What is the opt-out mechanism: email, certified \n     mail, or online form?\n\n2. Draft opt-out letters for any company that still \n   has an open window or that recently issued updated \n   terms of service. Each letter must:\n   - Reference the specific arbitration clause by \n     section number if published\n   - State my name, account number, and intent to \n     opt out of mandatory arbitration\n   - Be sent via the correct method (certified mail \n     where required)\n\n3. What do I actually gain by opting out?\n   Compare: arbitration (private, no appeal, \n   company-chosen arbitrator) vs. small claims or \n   class action access (public, appealable).\n\n4. Does opting out affect my service, pricing, \n   or account standing with these companies?\n\n5. Going forward: for every new account I open, \n   build me a same-day checklist to check for \n   an arbitration clause and immediately execute \n   the opt-out if one is available.\n\nAccounts to audit: [LIST WITH APPROXIMATE OPENING DATES]`
+        "body": `I want to identify which of my current service contracts \nallow me to opt out of mandatory arbitration clauses — \nand do so before the window closes.\n\n1. I have accounts/contracts with: [LIST COMPANIES — \n   credit cards, telecom, streaming, apps, banks, \n   insurance, etc.]\n\n   For each company, research:\n   - Do they have a mandatory arbitration clause?\n   - Do they offer an opt-out window? (Typically 30–60 days \n     from account opening or from when a new terms \n     update is issued)\n   - What is the opt-out mechanism: email, certified \n     mail, or online form?\n\n2. Draft opt-out letters for any company that still \n   has an open window or that recently issued updated \n   terms of service. Each letter must:\n   - Reference the specific arbitration clause by \n   section number if published\n   - State my name, account number, and intent to \n     opt out of mandatory arbitration\n   - Be sent via the correct method (certified mail \n     where required)\n\n3. What do I actually gain by opting out?\n   Compare: arbitration (private, no appeal, \n   company-chosen arbitrator) vs. small claims or \n   class action access (public, appealable).\n\n4. Does opting out affect my service, pricing, \n   or account standing with these companies?\n\n5. Going forward: for every new account I open, \n   build me a same-day checklist to check for \n   an arbitration clause and immediately execute \n   the opt-out if one is available.\n\nAccounts to audit: [LIST WITH APPROXIMATE OPENING DATES]`
       },
       {
         "id": "utility-budget-billing-exit-credit-recovery",
@@ -1643,7 +1719,7 @@
         "title": "Annual Contract Loyalty Retention Call Protocol",
         "lang": "text",
         "tags": ["Finance", "Telecom", "Retention"],
-        "body": `I want to call my current telecom/internet/streaming \nproviders and extract retention offers — the same \ndeals they give customers who threaten to cancel — \nwithout canceling.\n\n1. For each provider I'll call: [LIST — internet, \n   phone carrier, streaming, cable if any]\n\n   Before I call, build me a pre-call intelligence package:\n   - What new-customer promotional rate exists right now \n     for the same service I have?\n   - What competitor is offering for the same service?\n   - What is my current contract status: am I in a \n     contract, month-to-month, or post-contract?\n\n2. Draft my exact opening statement and the escalation \n   path for each call:\n   - Start: billing department, not customer service\n   - State I'm a [X-year] customer reviewing my options\n   - Reference the specific competitor price or \n     new-customer promo — by dollar amount\n   - Ask directly: \"What retention offers do you have \n     available for existing customers?\"\n\n3. What are the specific phrases that trigger a \n   transfer to the retention department (sometimes \n   called the \"save desk\") rather than staying \n   in standard customer service?\n\n4. What offers are typically available that they \n   don't advertise:\n   - Temporary rate reduction (3–6 months)\n   - Permanent rate lock\n   - Free equipment upgrade\n   - Bill credits\n   Which is most valuable for my situation?\n\n5. If they offer nothing: draft my cancellation \n   notice language that triggers one final \n   retention offer before my service ends.\n\nProviders: [LIST] | Current monthly costs: [LIST] | \nContract status per provider: [LIST] | \nYears as customer: [LIST]`
+        "body": `I want to call my current telecom/internet/streaming \nproviders and extract retention offers — the same \ndeals they give customers who threaten to cancel — \nwithout canceling.\n\n1. For each provider I'll call: [LIST — internet, \n   phone carrier, streaming, cable if any]\n\n   Before I call, build me a pre-call intelligence package:\n   - What new-customer promotional rate exists right now \n     for the same service I have?\n   - What competitor is offering for the same service?\n   - What is my current contract status: am I in a \n     contract, month-to-month, or post-contract?\n\n2. Draft my exact opening statement and the escalation \n   path for each call:\n   - Start: billing department, not customer service\n   - State I'm a [X-year] customer reviewing my options\n   - Reference the specific competitor price or \n     new-customer promo — by dollar amount\n   - Ask directly: "What retention offers do you have \n     available for existing customers?"\n\n3. What are the specific phrases that trigger a \n   transfer to the retention department (sometimes \n   called the "save desk") rather than staying \n   in standard customer service?\n\n4. What offers are typically available that they \n   don't advertise:\n   - Temporary rate reduction (3–6 months)\n   - Permanent rate lock\n   - Free equipment upgrade\n   - Bill credits\n   Which is most valuable for my situation?\n\n5. If they offer nothing: draft my cancellation \n   notice language that triggers one final \n   retention offer before my service ends.\n\nProviders: [LIST] | Current monthly costs: [LIST] | \nContract status per provider: [LIST] | \nYears as customer: [LIST]`
       },
       {
         "id": "universal-cold-start",
@@ -1722,24 +1798,11 @@
       }
     }
 
-    function padPct(n){
-      const s = String(n);
-      return s.length === 1 ? `0${s}` : s;
-    }
-
-    function updateScrollPct(){
-      const el = $("#scrollPct");
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      const pct = max <= 0 ? 0 : Math.round((window.scrollY / max) * 100);
-      el.textContent = `${padPct(Math.max(0, Math.min(100, pct)))}%`;
-    }
-
-    function normalize(s){ return (s || "").toLowerCase().trim(); }
+    function normalize(s) { return (s || "").toLowerCase().trim(); }
 
     let activeTag = "All";
 
-    function getQueryState(){
+    function getQueryState() {
       const u = new URL(window.location.href);
       return {
         q: u.searchParams.get("q") || "",
@@ -1747,7 +1810,7 @@
       };
     }
 
-    function setQueryState({ q, tag }){
+    function setQueryState({ q, tag }) {
       const u = new URL(window.location.href);
       if (q) u.searchParams.set("q", q); else u.searchParams.delete("q");
       if (tag && tag !== "All") u.searchParams.set("tag", tag); else u.searchParams.delete("tag");
@@ -1759,7 +1822,7 @@
       }
     }
 
-    function escapeHtml(str){
+    function escapeHtml(str) {
       return String(str)
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
@@ -1768,7 +1831,7 @@
         .replaceAll("'","&#039;");
     }
 
-    function renderTags(){
+    function renderTags() {
       const tagsEl = $("#tags");
       const tags = new Set(["All"]);
       PROMPTS.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
@@ -1790,7 +1853,7 @@
       });
     }
 
-    function cardTemplate(p){
+    function cardTemplate(p) {
       const safeId = p.id || crypto.randomUUID();
       const title = p.title || "Untitled";
       const lang = p.lang || "text";
@@ -1824,7 +1887,7 @@
       `;
     }
 
-    function wireCardEvents(root){
+    function wireCardEvents(root) {
       root.querySelectorAll("[data-code-card]").forEach(card => {
         const promptBtn = card.querySelector("[data-prompt-btn]");
         const codeEl = card.querySelector("[data-code]");
@@ -1840,7 +1903,7 @@
       });
     }
 
-    function render(){
+    function render() {
       const grid = $("#grid");
       const count = $("#count");
       const q = normalize($("#q").value);
@@ -1858,7 +1921,18 @@
       wireCardEvents(grid);
     }
 
-    function init(){
+    function updateFooterClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      const clockEl = document.getElementById('live-clock');
+      if (clockEl) {
+        clockEl.textContent = `${hrs}:${mins}:${secs}`;
+      }
+    }
+
+    function init() {
       const state = getQueryState();
       activeTag = state.tag || "All";
 
@@ -1879,13 +1953,13 @@
       renderTags();
       render();
 
-      updateScrollPct();
-      window.addEventListener("scroll", updateScrollPct, { passive: true });
-
       if (location.hash) {
         const el = document.querySelector(location.hash);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+
+      setInterval(updateFooterClock, 1000);
+      updateFooterClock();
     }
 
     document.addEventListener("DOMContentLoaded", init);
