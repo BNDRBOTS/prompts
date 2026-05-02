@@ -41,8 +41,8 @@
         radial-gradient(800px 800px at 50% 100%, var(--glow-red), transparent 60%),
         var(--bg);
       
-      /* Explicit padding to halt cards from scrolling behind the fixed footer */
-      padding: 28px 16px 140px; 
+      /* Explicit padding to completely halt cards from scrolling behind the fixed footer on all devices */
+      padding: 28px 16px 220px; 
     }
 
     .bg-noise {
@@ -255,9 +255,15 @@
       }
     }
 
+    /* Remove interactive cursors on touch devices strictly */
+    @media (pointer: coarse) {
+      .btn, .tag, .copy, a { cursor: default !important; }
+    }
+
     /* Mobile First Adjustments */
     @media (max-width: 720px) {
-      body { padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 180px max(16px, env(safe-area-inset-left)); }
+      /* Mobile padded bottom significantly to clear stacked footer */
+      body { padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 280px max(16px, env(safe-area-inset-left)); }
       .topbar { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
       .brand__title { font-size: 32px; }
       .topbar__right { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
@@ -288,22 +294,36 @@
       z-index: 9999;
       box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 16px;
     }
 
     .bndr-footer__left, .bndr-footer__center-left, .bndr-footer__socials, .bndr-footer__actions {
       display: flex;
     }
 
-    .bndr-footer__left { flex-direction: column; gap: 4px; }
-    .bndr-clock { font-weight: 700; font-size: 14px; letter-spacing: 1px; color: #fff;}
-    .bndr-copyright { color: #666666; font-size: 10px; }
+    .bndr-footer__left { align-items: center; }
+    
+    .bndr-footer-logo {
+      height: 38px;
+      width: auto;
+      max-height: 100%;
+      display: block;
+      object-fit: contain;
+    }
 
-    .bndr-footer__center-left { flex-direction: column; gap: 4px; margin-left: -2vw; }
+    .bndr-footer__center-left { flex-direction: column; justify-content: center; gap: 4px; margin-left: -2vw; }
     .bndr-links { display: flex; gap: 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
     .bndr-links a { color: #888888; text-decoration: none; transition: color 0.15s ease; }
     .bndr-links a:hover { color: #ffffff; }
-    .bndr-email { color: #666666; font-size: 11px; letter-spacing: 0.5px; }
+    
+    .bndr-email { 
+      color: #666666; 
+      font-size: 11px; 
+      letter-spacing: 0.5px; 
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .bndr-email:hover { color: #ffffff; }
 
     .bndr-footer__socials { gap: 14px; align-items: center; }
     .bndr-social-icon { 
@@ -312,16 +332,17 @@
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      opacity: 0.75; 
+      opacity: 0.85; 
       transition: all 0.2s ease; 
       color: inherit;
+      filter: drop-shadow(0 0 4px rgba(255,255,255,0.25)); /* Persistent subtle glow */
     }
     
     /* Hover Glow Accents */
     .bndr-social-icon:hover { 
       opacity: 1; 
       transform: translateY(-2px);
-      filter: drop-shadow(0 0 8px currentColor);
+      filter: drop-shadow(0 0 10px currentColor); /* Strong matching glow */
     }
 
     .bndr-social-icon svg { width: 100%; height: 100%; }
@@ -338,11 +359,12 @@
       letter-spacing: 0.5px;
       text-decoration: none;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
     .bndr-action-btn:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); }
 
     @media (max-width: 900px) {
-      .bndr-footer { height: auto; padding: 16px; gap: 16px; justify-content: center; text-align: center; }
+      .bndr-footer { padding: 16px; gap: 16px; justify-content: center; text-align: center; }
       .bndr-footer__left, .bndr-footer__center-left { align-items: center; margin-left: 0; }
     }
   </style>
@@ -377,8 +399,9 @@
 
   <footer class="bndr-footer">
     <div class="bndr-footer__left">
-      <span class="bndr-clock" id="live-clock">00:00:00</span>
-      <span class="bndr-copyright">© 2026 BNDR LLC</span>
+      <a href="https://bndrllc.com" aria-label="BNDR LLC" style="display:flex; align-items:center;">
+        <img class="bndr-footer-logo" src="https://www.dropbox.com/scl/fi/arq5ahrf3m1m9060bes5h/BNDR_Upscaled_26_Blk_Wht-Background-Removed.png?rlkey=3iwsya8nh4igg9ql4acm0xbe2&st=fgqe6935&raw=1" alt="BNDR LLC">
+      </a>
     </div>
 
     <div class="bndr-footer__center-left">
@@ -386,7 +409,7 @@
         <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&e=1&st=dgn3s7uz&dl=0" target="_blank" rel="noopener noreferrer">PRIVACY</a>
         <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&e=1&st=af3kun5i&dl=0" target="_blank" rel="noopener noreferrer">TERMS</a>
       </div>
-      <span class="bndr-email">BNDR.LABS@GMAIL.COM</span>
+      <a href="mailto:bndr.labs@gmail.com" class="bndr-email">BNDR.LABS@GMAIL.COM</a>
     </div>
 
     <div class="bndr-footer__socials">
@@ -437,8 +460,8 @@
     </div>
 
     <div class="bndr-footer__actions">
-      <a href="tel:#" class="bndr-action-btn">CALL DIRECT</a>
-      <a href="#" class="bndr-action-btn">START BUILD</a>
+      <a href="tel:17179197731" class="bndr-action-btn">CALL DIRECT</a>
+      <a href="mailto:bndr.labs@gmail.com" class="bndr-action-btn">START BUILD</a>
     </div>
   </footer>
 
@@ -1110,6 +1133,34 @@
         "body": "Predict patterns from time-series data\nAnalyze timeseries: [DATA]. Identify: patterns, anomalies, seasonality, correlation coefficients. Project: 3/6/12 month forecasts with confidence intervals. Output: trend visualization + key drivers + risk factors + scenario modeling."
       },
       {
+        "id": "jargon-stripper",
+        "title": "Jargon Stripper™",
+        "lang": "text",
+        "tags": ["copywriting", "B2B-sales", "jargon-removal"],
+        "body": "Strip technical jargon from B2B copy\nFor each technical term, trace causal chain to exact downstream business outcome (revenue protected, cost eliminated, risk reduced, time recovered, compliance achieved) as experienced by the buyer's P&L. Flag terms without traceable outcome. Output: term-to-outcome table and fully rewritten copy with zero technical abstraction."
+      },
+      {
+        "id": "value-prop-flipper",
+        "title": "Value-Prop Flipper™",
+        "lang": "text",
+        "tags": ["demand-classification", "messaging-strategy", "sales-funnel"],
+        "body": "Classify features/services as HARVEST or PLANT demand\nApply binary test: 'Does ideal buyer already know they need this, or must they be educated first?' For HARVEST items, extract exact buyer language/search query/budget line. For PLANT items, identify prerequisite belief. Output table with classification and evidence, plus directive: top-of-funnel may only lead with HARVEST; PLANT items restricted to nurture/post-commitment."
+      },
+      {
+        "id": "artifact-constructor",
+        "title": "Artifact Constructor™",
+        "lang": "text",
+        "tags": ["sales-wedge", "lead-conversion", "value-demonstration"],
+        "body": "Engineer a 15-minute tangible sales artifact\nDeconstruct complex offering to its core promise. Identify smallest unit of value renderable as a physical/digital artifact (audit, mockup, snapshot) in under 15 minutes, with zero setup friction and undeniable specificity to buyer's environment. Output: Artifact Blueprint (name, format, production steps, opening line, gatekeeper bypass, risk reversal). Must be deliverable in first conversation, no integration-dependent demos."
+      },
+      {
+        "id": "self-question-prompting",
+        "title": "Self-Question Prompting",
+        "lang": "text",
+        "tags": ["meta-cognition", "self-improvement", "prompt-engineering"],
+        "body": "Iteratively improve answer by self-questioning\nFirst, silently generate an initial answer. Then, imagine the user asking: 'What relevant context did you fail to integrate?' Enumerate each overlooked item and identify flaws in reasoning. Use everything up to the breakdown point as foundation. Then produce the final answer, fully synthesized from all available session insights."
+      },
+      {
         "id": "ab-test-analysis",
         "title": "A/B Test Analysis",
         "lang": "text",
@@ -1766,6 +1817,76 @@
         "lang": "text",
         "tags": ["Meta", "Savings", "Stack"],
         "body": `Build a savings stack for [CATEGORY / TARGET] blending at minimum:\n— 1 base-price advantage\n— 1 platform advantage\n— 1 membership advantage\n— 1 payment-card advantage\n— 1 anomaly\n— 1 post-purchase recovery\n\nConstraints: [insert]\nCards/memberships/platforms available: [insert]\n\nMETHOD:\n1. Map all candidate stack layers\n2. Eliminate incompatible combinations before ranking\n3. Rank by true net cost — not sticker price\n4. Points: 1.0¢ airline miles · 0.7¢ flexible · 0.5¢ hotel\n5. [UNVERIFIED] on any layer not confirmable today — exclude from net cost\n6. Include failure risk and time cost for each stack\n\nOUTPUT:\n— Top 5 stacks with exact layer order and net savings per layer\n— Execution steps per stack\n— Backup if one layer fails\n— The single most overlooked route`
+      },
+      {
+        "id": "growth-levers-hidden-opportunities",
+        "title": "Growth Levers & Hidden Opportunities",
+        "lang": "text",
+        "tags": ["growth", "strategy", "forensic-extraction"],
+        "body": "Extract 5 source-bound growth levers\nFrom the source document, identify overlooked assets, underutilized channels, asymmetric leverage points, viral accelerants, and margin expanders. Output structured Q&A pairs, forensic summaries, and mechanism-derived insight amplifications. Categories: Leverage_Point, Hidden_Asset, Underpriced_Channel, Viral_Accelerant, Margin_Expander."
+      },
+      {
+        "id": "customer-pain-points-friction-zones",
+        "title": "Customer Pain Points & Friction Zones",
+        "lang": "text",
+        "tags": ["ux", "customer-journey", "churn"],
+        "body": "Map customer pain points and friction\nExtract 5 source-bound friction zones from the product/service description. Identify where users bleed time, money, or attention at each journey stage. Categories: Friction_Point, Abandon_Trigger, Unmet_Need, Support_Drain, Churn_Driver. Output forensic Q&A, consequence summary, and structural causation."
+      },
+      {
+        "id": "competitive-vulnerabilities-moat-weaknesses",
+        "title": "Competitive Vulnerabilities & Moat Weaknesses",
+        "lang": "text",
+        "tags": ["competitive-analysis", "moat", "forensic-extraction"],
+        "body": "Expose competitive weaknesses\nExtract 5 source-bound vulnerabilities a funded rival would attack first. Identify copycat risk, switching triggers, feature commoditization, pricing pressure, and lock-in absence. Output adversary-attack scenarios, timeline of exposure, and mechanism of breach. Categories: Copycat_Risk, Switching_Trigger, Feature_Commodity, Pricing_Pressure, Lock_in_Absence."
+      },
+      {
+        "id": "operational-inefficiencies-resource-drains",
+        "title": "Operational Inefficiencies & Resource Drains",
+        "lang": "text",
+        "tags": ["operations", "cost-cutting", "forensic-extraction"],
+        "body": "Identify hidden operational waste\nExtract 5 source-bound inefficiencies where money, time, and attention evaporate without impact. Isolate process bloat, tool debt, communication overhead, decision latency, and talent misalignment. Output the drain’s documented cost, structural cause, and collapse scenario. Categories: Process_Bloat, Tool_Debt, Communication_Overhead, Decision_Latency, Talent_Misalignment."
+      },
+      {
+        "id": "market-readiness-adoption-accelerators",
+        "title": "Market Readiness & Adoption Accelerators",
+        "lang": "text",
+        "tags": ["market-fit", "adoption", "forensic-extraction"],
+        "body": "Reveal market readiness and accelerants\nExtract 5 source-bound indicators that must be true for rapid traction. Identify adoption accelerators, infrastructure readiness, behavioral tailwinds, regulatory greenlights, and competitive gaps. Output the condition’s window of opportunity and what closes it. Categories: Adoption_Accelerator, Infrastructure_Ready, Behavioral_Tailwind, Regulatory_Greenlight, Competitive_Gap."
+      },
+      {
+        "id": "arbitrage-gaps-market",
+        "title": "Arbitrage Gaps & Market Spreads",
+        "lang": "text",
+        "tags": ["arbitrage", "price-dispersion", "forensic-extraction"],
+        "body": "Uncover exploitable arbitrage gaps\nFrom the market description, exhaustively list every price hole, time lag, cross-platform spread, geographic disparity, information asymmetry, and liquidity mismatch. Output unlimited-length lists of buy-low/sell-high pairs, profit windows, and entry/exit tactics. Categories: Cross_Platform_Spread, Temporal_Arbitrage_Window, Geographic_Price_Hole, Information_Asymmetry_Gap, Liquidity_Mismatch."
+      },
+      {
+        "id": "market-gaps-service-ecosystem",
+        "title": "Market Gaps & Underserved Niches",
+        "lang": "text",
+        "tags": ["market-gaps", "unmet-demand", "forensic-extraction"],
+        "body": "Map unmet demand and supply voids\nExhaustively list every neglected customer, unanswered complaint, broken journey, and competitor blind spot from the ecosystem description. Identify zero-capital entry points, underserved niches, and unbundling opportunities. Output revenue potential, ease of entry, and moat for each gap. Categories: Underserved_Niche, Frustration_Overload, Competitor_Blindspot, Regulatory_Vacuum, Unbundling_Opportunity."
+      },
+      {
+        "id": "odd-job-handyman-inefficiencies",
+        "title": "Odd-Job & Handyman Arbitrage",
+        "lang": "text",
+        "tags": ["handyman", "pricing-asymmetry", "forensic-extraction"],
+        "body": "Exploit local service pricing gaps\nExhaustively list every overpriced repair under 15 minutes, every frustrated homeowner complaint, and every underused tool that can generate income. Unbundle services, identify YouTube-solvable problems pros hide, and reveal repeatable fixes with massive margin. Categories: Pricing_Asymmetry, Pain_Point_Cluster, Repeatable_Fix, Tool_Underutilization, Travel_Waste."
+      },
+      {
+        "id": "gig-economy-side-hustle-exploits",
+        "title": "Gig Economy & Side Hustle Loopholes",
+        "lang": "text",
+        "tags": ["gig-economy", "platform-exploits", "forensic-extraction"],
+        "body": "3x hourly rate through platform arbitrage\nExhaustively list every time-sensitive bonus, referral chain gap, task misclassification, surge window, and hidden incentive from the platform description. Output earning differentials, detection risk, and multi-platform diversification strategies. Categories: Surge_Window, Referral_Loop_Hole, Bonus_Stacking, Task_Unbundling, Geographic_Shift."
+      },
+      {
+        "id": "local-service-physical-asset-arbitrage",
+        "title": "Local Asset & Idle Capacity Monetization",
+        "lang": "text",
+        "tags": ["asset-arbitrage", "idle-capacity", "forensic-extraction"],
+        "body": "Turn idle space and assets into cash\nExhaustively list every unused square foot, rotting tool, parked vehicle, and underutilized yard from the neighborhood description. Apply storage arbitrage, parking space mismatches, and shared-economy dead zones. Output revenue potential, legal wrappers, and aggregation strategies. Categories: Storage_Arbitrage, Parking_Space_Gap, Tool_Library_Model, Backyard_Underuse, Vehicle_Idle_Time."
       },
       {
         "id": "ultra-hard-fixed",
